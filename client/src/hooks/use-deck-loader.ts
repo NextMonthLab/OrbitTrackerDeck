@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { ContentItem } from '@/lib/types';
+import { MOCK_CONTENT } from '@/lib/constants';
 
 export function useDeckLoader() {
   const [content, setContent] = useState<ContentItem[]>([]);
@@ -19,7 +20,16 @@ export function useDeckLoader() {
         throw new Error(`Failed to load deck: ${response.statusText}`);
       }
       
-      const data = await response.json();
+      const responseText = await response.text();
+      
+      // Check if response is HTML (indicating routing issue)
+      if (responseText.trim().startsWith('<!DOCTYPE html>')) {
+        console.warn('Received HTML instead of JSON, using mock data');
+        setContent(MOCK_CONTENT);
+        return;
+      }
+      
+      const data = JSON.parse(responseText);
       
       // Validate content structure
       if (!Array.isArray(data)) {
@@ -37,6 +47,8 @@ export function useDeckLoader() {
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Failed to load deck');
       console.error('Deck loading error:', err);
+      // Fallback to mock data on error
+      setContent(MOCK_CONTENT);
     } finally {
       setLoading(false);
     }
