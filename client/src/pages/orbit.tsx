@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { ContentItem } from "@/lib/types";
 import { useDeckLoader } from "@/hooks/use-deck-loader";
+import { GravityEngine } from "@/components/orbit/gravity-engine";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -13,7 +14,9 @@ import {
   Route, 
   Target,
   ChevronRight,
-  Zap
+  Zap,
+  Compass,
+  Brain
 } from "lucide-react";
 
 // Dynamic icon mapping based on content tags and titles
@@ -140,26 +143,34 @@ interface SuggestedNextProps {
 }
 
 function SuggestedNext({ currentContent, allContent, onSelect }: SuggestedNextProps) {
-  // Find related content based on shared tags
-  const suggested = allContent
-    .filter(item => 
-      item.title !== currentContent.title && 
-      item.tags.some(tag => currentContent.tags.includes(tag))
-    )
-    .slice(0, 3);
+  // Use Gravity Engine for intelligent suggestions
+  const suggested = GravityEngine.getSuggestedNext(currentContent, allContent);
   
   if (suggested.length === 0) {
     // If no related content, show other items
     const others = allContent.filter(item => item.title !== currentContent.title).slice(0, 3);
     suggested.push(...others);
   }
+
+  // Check if suggestions are gravity-based or tag-based
+  const hasGravityData = currentContent.gravity?.related && currentContent.gravity.related.length > 0;
   
   return (
     <div className="space-y-3">
       <h4 className="font-mono text-military-amber font-bold text-sm uppercase tracking-wide flex items-center">
-        <Zap className="h-4 w-4 mr-2" />
-        Tactical Suggestions
+        {hasGravityData ? (
+          <Brain className="h-4 w-4 mr-2" />
+        ) : (
+          <Compass className="h-4 w-4 mr-2" />
+        )}
+        {hasGravityData ? 'AI Gravity' : 'Tactical Suggestions'}
       </h4>
+      {hasGravityData && (
+        <div className="text-xs text-gray-400 font-mono mb-2 flex items-center">
+          <div className="w-2 h-2 bg-military-amber rounded-full mr-2 animate-pulse"></div>
+          Powered by story intelligence
+        </div>
+      )}
       {suggested.map((item, index) => {
         const IconComponent = getIconForContent(item);
         
@@ -206,25 +217,34 @@ export default function OrbitPage() {
     }
   }, [content, activeContent]);
 
-  // Calculate orbital positions for nodes
+  // Calculate orbital positions for nodes with gravity-based ordering
   const getOrbitPositions = (count: number, excludeActive: boolean = true) => {
     const positions = [];
-    const radius = 35; // Percentage from center
     const centerX = 50;
     const centerY = 50;
     
-    const availableContent = excludeActive && activeContent
+    let availableContent = excludeActive && activeContent
       ? content.filter(item => item.title !== activeContent.title)
       : content;
     
+    // Use gravity engine to reorder content if we have an active content
+    if (activeContent && excludeActive) {
+      const reordered = GravityEngine.reorderByGravity(activeContent, content);
+      availableContent = reordered.filter(item => item.title !== activeContent.title);
+    }
+    
     for (let i = 0; i < availableContent.length; i++) {
       const angle = (i / availableContent.length) * 2 * Math.PI;
+      // Vary radius based on gravity relationship - closer for related content
+      const isGravityRelated = activeContent?.gravity?.related?.includes(availableContent[i].title);
+      const radius = isGravityRelated ? 30 : 40; // Closer orbit for related content
+      
       const x = centerX + radius * Math.cos(angle);
       const y = centerY + radius * Math.sin(angle);
       positions.push({ x, y });
     }
     
-    return positions;
+    return { positions, orderedContent: availableContent };
   };
 
   const handleNodeClick = async (newContent: ContentItem) => {
@@ -273,8 +293,7 @@ export default function OrbitPage() {
     );
   }
 
-  const orbitPositions = getOrbitPositions(content.length - 1);
-  const orbitContent = content.filter(item => item.title !== activeContent.title);
+  const { positions: orbitPositions, orderedContent: orbitContent } = getOrbitPositions(content.length - 1);
 
   return (
     <div className="min-h-screen bg-nextm-gradient" data-theme="military">

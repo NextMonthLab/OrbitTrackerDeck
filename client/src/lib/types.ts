@@ -3,6 +3,10 @@ export interface ContentItem {
   content: string;
   tags: string[];
   media?: string;
+  gravity?: {
+    related: string[];
+    intensity: number;
+  };
 }
 
 export interface Template {

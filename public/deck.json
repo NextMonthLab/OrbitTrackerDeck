@@ -3,36 +3,60 @@
     "title": "Mission Brief",
     "content": "Your mission is to engage hostile forces in sector 7-Alpha. Primary objectives include securing the communication relay and establishing a forward operating base. Intelligence suggests moderate resistance with potential for heavy armor support. Rules of engagement are weapons free on confirmed hostiles.",
     "tags": ["intro", "objectives", "briefing"],
-    "media": "/assets/mission.mp4"
+    "media": "/assets/mission.mp4",
+    "gravity": {
+      "related": ["Intel Report", "Equipment Loadout", "Communication Protocol"],
+      "intensity": 0.9
+    }
   },
   {
     "title": "Intel Report",
     "content": "Surveillance indicates enemy movement patterns concentrated around the eastern perimeter. Thermal imaging reveals approximately 12-15 personnel with light vehicles. No air support detected. Weather conditions favorable with clear visibility. Recommended approach vector from the northwest.",
     "tags": ["data", "threats", "surveillance"],
-    "media": "/assets/intel.jpg"
+    "media": "/assets/intel.jpg",
+    "gravity": {
+      "related": ["Extraction Plan", "Equipment Loadout", "Rules of Engagement"],
+      "intensity": 0.8
+    }
   },
   {
     "title": "Extraction Plan",
     "content": "Exit strategy coordinates Delta-9 checkpoint at 1400 hours. Primary route via highway 7, secondary through forest path if compromised. Evac helicopter on standby at LZ Bravo. Emergency protocols include smoke signal deployment and radio frequency 147.3 for emergency contact.",
     "tags": ["strategy", "timing", "evacuation"],
-    "media": "/assets/extraction.png"
+    "media": "/assets/extraction.png",
+    "gravity": {
+      "related": ["Communication Protocol", "Equipment Loadout", "Intel Report"],
+      "intensity": 0.7
+    }
   },
   {
     "title": "Equipment Loadout",
     "content": "Standard assault configuration with M4A1 carbine, 210 rounds 5.56mm, tactical vest, night vision optics, communications gear, medical kit, and 72-hour rations. Additional gear includes breaching charges, signal flares, and GPS navigation unit.",
     "tags": ["equipment", "tactical", "gear"],
-    "media": "/assets/loadout.jpg"
+    "media": "/assets/loadout.jpg",
+    "gravity": {
+      "related": ["Mission Brief", "Rules of Engagement", "Communication Protocol"],
+      "intensity": 0.8
+    }
   },
   {
     "title": "Communication Protocol",
     "content": "Primary radio frequency 142.7 MHz. Backup on 156.8 MHz. Check-in intervals every 15 minutes during movement phase, every 5 minutes during engagement. Code words: Thunder for all-clear, Lightning for contact, Storm for immediate extraction required.",
     "tags": ["communication", "protocol", "radio"],
-    "media": "/assets/comms.png"
+    "media": "/assets/comms.png",
+    "gravity": {
+      "related": ["Mission Brief", "Extraction Plan", "Rules of Engagement"],
+      "intensity": 0.6
+    }
   },
   {
     "title": "Rules of Engagement",
     "content": "Weapons free on positively identified hostile forces. Civilian protection is priority. No engagement without positive target identification. Minimize collateral damage. Medical aid to wounded regardless of affiliation. Document all engagements for after-action review.",
     "tags": ["rules", "engagement", "protocol"],
-    "media": "/assets/roe.pdf"
+    "media": "/assets/roe.pdf",
+    "gravity": {
+      "related": ["Intel Report", "Equipment Loadout", "Communication Protocol"],
+      "intensity": 0.7
+    }
   }
 ]

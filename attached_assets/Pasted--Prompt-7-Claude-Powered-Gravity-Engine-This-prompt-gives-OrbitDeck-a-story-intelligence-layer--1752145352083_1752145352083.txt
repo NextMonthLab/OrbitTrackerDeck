@@ -1,0 +1,109 @@
+🟣 Prompt 7: Claude-Powered Gravity Engine
+
+This prompt gives OrbitDeck a “story intelligence layer” that dynamically recommends what a user should explore next — based on what they’ve clicked, what tags are present, and what Claude infers.
+
+⸻
+
+🧠 Prompt Start:
+
+You are now building the Gravity Logic Engine for OrbitDeck.
+
+⸻
+
+🎯 Purpose
+
+Enable OrbitDeck to:
+	1.	Suggest the next best content based on user intent
+	2.	Reorder orbiting nodes contextually
+	3.	Use Claude to analyze uploaded slides and generate:
+	•	Tags
+	•	Priority weights
+	•	Storyline paths
+
+⸻
+
+🔄 Logic Flow
+	1.	User clicks a node (e.g. “Pricing”)
+	2.	The system:
+	•	Reads the tags of the selected node
+	•	Finds other nodes with overlapping or adjacent tags
+	•	Ranks and repositions those nodes in the orbit
+	•	Populates <SuggestedNext /> with top 3 matches
+
+⸻
+
+🧩 Required Metadata Format (Updated JSON)
+
+[
+  {
+    "title": "Pricing",
+    "content": "...",
+    "tags": ["value", "money", "conversion"],
+    "gravity": {
+      "related": ["Guarantees", "Testimonials", "Contact"],
+      "intensity": 0.8
+    }
+  }
+]
+
+gravity.related is optional if Claude hasn’t populated it yet.
+If absent, use fallback tag-based overlap matching.
+
+⸻
+
+🧠 Claude’s Role
+
+Use Claude to:
+	•	Auto-tag each slide or content block
+	•	Suggest gravity-related topics for each block
+	•	Generate a gravity map on upload
+
+Example Claude Instruction:
+
+Given this JSON array of slide content, generate a new array with tags and a gravity.related list of 3 slide titles that would logically follow each one in a non-linear presentation flow.
+
+⸻
+
+⚙️ System Behavior
+	•	When a node becomes center:
+	•	Animate top 3 gravity matches closer
+	•	Update SuggestedNext
+	•	Optionally dim unrelated nodes
+	•	Claude-powered logic should be cached per experience (per user session)
+
+⸻
+
+🧱 Components to Update
+
+<GravityEngine />
+	•	Accepts current slide + full deck
+	•	Returns reordered array
+	•	Can be local JS logic or Claude API call
+
+<SuggestedNext />
+	•	Displays Claude-suggested follow-ups
+	•	Clicking one triggers node jump + orbit update
+
+⸻
+
+🧠 Fallback Logic (if Claude not available)
+
+function getSuggestedNext(slide, allSlides) {
+  return allSlides
+    .filter(s => s.title !== slide.title)
+    .map(s => ({
+      ...s,
+      relevance: s.tags.filter(tag => slide.tags.includes(tag)).length
+    }))
+    .sort((a, b) => b.relevance - a.relevance)
+    .slice(0, 3)
+}
+
+
+⸻
+
+✅ Output After This Prompt
+	•	Claude-enhanced story logic per node
+	•	Orbit updates dynamically after selection
+	•	SuggestedNext panel feels intelligent
+	•	Gravity values baked into content layer
