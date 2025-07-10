@@ -1,7 +1,10 @@
 import { Satellite, Upload, Grid3X3, Palette, Eye, Save } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { useDeckLoader } from "@/hooks/use-deck-loader";
 
 export default function Sidebar() {
+  const { content, loading, error } = useDeckLoader();
+
   return (
     <aside className="fixed left-0 top-0 h-full w-80 bg-nextm-darker border-r border-military-tactical z-10">
       {/* Header */}
@@ -56,7 +59,7 @@ export default function Sidebar() {
             </div>
             <div className="flex justify-between">
               <span className="text-gray-400">Content:</span>
-              <span className="text-neon-green font-mono">3 ITEMS</span>
+              <span className="text-neon-green font-mono">{content.length} ITEMS</span>
             </div>
           </div>
         </div>

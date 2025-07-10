@@ -1,7 +1,7 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { MOCK_CONTENT } from "@/lib/constants";
 import { ContentItem } from "@/lib/types";
+import { useDeckLoader } from "@/hooks/use-deck-loader";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -16,10 +16,19 @@ import {
   Zap
 } from "lucide-react";
 
-const iconMap = {
-  "Mission Brief": FileText,
-  "Intel Report": Search,
-  "Extraction Plan": Route
+// Dynamic icon mapping based on content tags and titles
+const getIconForContent = (content: ContentItem) => {
+  const title = content.title.toLowerCase();
+  const tags = content.tags.join(' ').toLowerCase();
+  
+  if (title.includes('brief') || tags.includes('briefing') || tags.includes('intro')) return FileText;
+  if (title.includes('intel') || tags.includes('surveillance') || tags.includes('data')) return Search;
+  if (title.includes('extraction') || title.includes('plan') || tags.includes('strategy')) return Route;
+  if (title.includes('equipment') || tags.includes('gear') || tags.includes('tactical')) return Target;
+  if (title.includes('communication') || tags.includes('radio') || tags.includes('protocol')) return Zap;
+  if (title.includes('rules') || tags.includes('engagement') || tags.includes('roe')) return Target;
+  
+  return Target; // Default icon
 };
 
 interface OrbitNodeProps {
@@ -31,7 +40,7 @@ interface OrbitNodeProps {
 }
 
 function OrbitNode({ content, position, isActive, onClick, index }: OrbitNodeProps) {
-  const IconComponent = iconMap[content.title as keyof typeof iconMap] || Target;
+  const IconComponent = getIconForContent(content);
   
   return (
     <motion.div
@@ -86,7 +95,7 @@ interface CentralDisplayProps {
 }
 
 function CentralDisplay({ content }: CentralDisplayProps) {
-  const IconComponent = iconMap[content.title as keyof typeof iconMap] || Target;
+  const IconComponent = getIconForContent(content);
   
   return (
     <motion.div
@@ -105,6 +114,13 @@ function CentralDisplay({ content }: CentralDisplayProps) {
         <p className="text-sm text-gray-300 font-mono mb-4 leading-relaxed">
           {content.content}
         </p>
+        
+        {/* Media Display */}
+        {content.media && (
+          <div className="w-full h-32 bg-nextm-darker rounded border border-military-tactical mb-4 flex items-center justify-center">
+            <span className="text-xs text-gray-500 font-mono">MEDIA: {content.media.split('/').pop()}</span>
+          </div>
+        )}
         <div className="flex flex-wrap gap-1 justify-center">
           {content.tags.map((tag) => (
             <Badge key={tag} className="px-2 py-1 bg-military-tactical text-xs font-mono text-military-khaki">
@@ -145,7 +161,7 @@ function SuggestedNext({ currentContent, allContent, onSelect }: SuggestedNextPr
         Tactical Suggestions
       </h4>
       {suggested.map((item, index) => {
-        const IconComponent = iconMap[item.title as keyof typeof iconMap] || Target;
+        const IconComponent = getIconForContent(item);
         
         return (
           <motion.div
@@ -179,8 +195,16 @@ function SuggestedNext({ currentContent, allContent, onSelect }: SuggestedNextPr
 }
 
 export default function OrbitPage() {
-  const [activeContent, setActiveContent] = useState<ContentItem>(MOCK_CONTENT[0]);
+  const { content, loading: deckLoading, error } = useDeckLoader();
+  const [activeContent, setActiveContent] = useState<ContentItem | null>(null);
   const [isLoading, setIsLoading] = useState(false);
+
+  // Set initial active content when deck loads
+  useEffect(() => {
+    if (content.length > 0 && !activeContent) {
+      setActiveContent(content[0]);
+    }
+  }, [content, activeContent]);
 
   // Calculate orbital positions for nodes
   const getOrbitPositions = (count: number, excludeActive: boolean = true) => {
@@ -189,9 +213,9 @@ export default function OrbitPage() {
     const centerX = 50;
     const centerY = 50;
     
-    const availableContent = excludeActive 
-      ? MOCK_CONTENT.filter(item => item.title !== activeContent.title)
-      : MOCK_CONTENT;
+    const availableContent = excludeActive && activeContent
+      ? content.filter(item => item.title !== activeContent.title)
+      : content;
     
     for (let i = 0; i < availableContent.length; i++) {
       const angle = (i / availableContent.length) * 2 * Math.PI;
@@ -203,18 +227,54 @@ export default function OrbitPage() {
     return positions;
   };
 
-  const handleNodeClick = async (content: ContentItem) => {
-    if (content.title === activeContent.title) return;
+  const handleNodeClick = async (newContent: ContentItem) => {
+    if (!activeContent || newContent.title === activeContent.title) return;
     
     setIsLoading(true);
     // Simulate loading delay for tactical feel
     await new Promise(resolve => setTimeout(resolve, 300));
-    setActiveContent(content);
+    setActiveContent(newContent);
     setIsLoading(false);
   };
 
-  const orbitPositions = getOrbitPositions(MOCK_CONTENT.length - 1);
-  const orbitContent = MOCK_CONTENT.filter(item => item.title !== activeContent.title);
+  // Handle loading states
+  if (deckLoading) {
+    return (
+      <div className="min-h-screen bg-nextm-gradient flex items-center justify-center">
+        <div className="text-center">
+          <div className="w-12 h-12 border-2 border-military-amber border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
+          <p className="font-mono text-military-amber">LOADING MISSION DATA...</p>
+        </div>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="min-h-screen bg-nextm-gradient flex items-center justify-center">
+        <div className="text-center tactical-border rounded-xl p-8 bg-military-dark">
+          <p className="font-mono text-red-400 mb-4">MISSION DATA ERROR</p>
+          <p className="text-gray-400 text-sm mb-4">{error}</p>
+          <Button onClick={() => window.location.reload()} className="bg-military-gradient text-nextm-dark font-bold">
+            Retry Mission Load
+          </Button>
+        </div>
+      </div>
+    );
+  }
+
+  if (content.length === 0 || !activeContent) {
+    return (
+      <div className="min-h-screen bg-nextm-gradient flex items-center justify-center">
+        <div className="text-center">
+          <p className="font-mono text-military-amber">NO MISSION DATA AVAILABLE</p>
+        </div>
+      </div>
+    );
+  }
+
+  const orbitPositions = getOrbitPositions(content.length - 1);
+  const orbitContent = content.filter(item => item.title !== activeContent.title);
 
   return (
     <div className="min-h-screen bg-nextm-gradient" data-theme="military">
@@ -250,11 +310,11 @@ export default function OrbitPage() {
             <div className="space-y-2 text-sm">
               <div className="flex justify-between">
                 <span className="text-gray-400">Active Node:</span>
-                <span className="text-military-khaki font-mono">{activeContent.title}</span>
+                <span className="text-military-khaki font-mono">{activeContent.title.slice(0, 20)}...</span>
               </div>
               <div className="flex justify-between">
                 <span className="text-gray-400">Total Nodes:</span>
-                <span className="text-neon-green font-mono">{MOCK_CONTENT.length}</span>
+                <span className="text-neon-green font-mono">{content.length}</span>
               </div>
               <div className="flex justify-between">
                 <span className="text-gray-400">Theme:</span>
@@ -357,7 +417,7 @@ export default function OrbitPage() {
             <div>
               <SuggestedNext 
                 currentContent={activeContent}
-                allContent={MOCK_CONTENT}
+                allContent={content}
                 onSelect={handleNodeClick}
               />
             </div>

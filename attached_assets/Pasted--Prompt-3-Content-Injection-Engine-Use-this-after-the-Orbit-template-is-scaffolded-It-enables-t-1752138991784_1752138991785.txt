@@ -1,0 +1,99 @@
+🟣 Prompt 3: Content Injection Engine
+
+Use this after the Orbit template is scaffolded. It enables the app to dynamically render user content based on uploaded files, parsed decks, or structured JSON.
+
+⸻
+
+🧠 Prompt Start:
+
+You are now building the Content Injection Engine for OrbitDeck.
+
+⸻
+
+🎯 Purpose
+
+Transform static Orbit template into a dynamic experience renderer. Content must be injected from:
+	•	Uploaded JSON
+	•	Parsed .pptx file (simulated for now)
+	•	A Google Slides URL (optional later)
+	•	Manually loaded deck.json in /public folder
+
+⸻
+
+🔄 Required Logic
+	1.	Load content JSON
+	•	From local /public/deck.json (for now)
+	•	Simulated example (3–8 items)
+	2.	Map to orbit nodes
+	•	Each item = 1 clickable node
+	•	Title = label
+	•	Tags = logic metadata
+	3.	Render in <CentralDisplay>
+	•	On click, move selected node to center
+	•	Show full title, content, and optional media
+	•	Reorder remaining nodes in orbit
+	4.	Generate gravity suggestions
+	•	Find up to 3 nodes with at least one overlapping tag
+	•	Pass to <SuggestedNext> panel
+
+⸻
+
+🧩 JSON Format Required
+
+[
+  {
+    "title": "Mission Brief",
+    "content": "Your mission is to engage...",
+    "tags": ["intro", "objectives"],
+    "media": "/assets/mission.mp4"
+  },
+  {
+    "title": "Intel Report",
+    "content": "Surveillance indicates...",
+    "tags": ["data", "threats"]
+  },
+  {
+    "title": "Extraction Plan",
+    "content": "Exit strategy with coordinates...",
+    "tags": ["strategy", "timing"]
+  }
+]
+
+
+⸻
+
+📁 File Expectations
+	•	deck.json placed in /public/
+	•	All media (images, videos) stored in /public/assets/
+
+⸻
+
+⚙️ Component Updates
+
+Make the following components accept props:
+	•	<OrbitNode />: takes title, tags, and active state
+	•	<CentralDisplay />: receives full content
+	•	<SuggestedNext />: generates from tag matching logic
+
+Optional enhancement: support a <DeckLoader /> that allows file upload for .json or .pptx (mock now, real later).
+
+⸻
+
+🎯 Additional Instructions
+	•	On initial load, first item in the deck becomes the focused node.
+	•	Nodes animate into orbit based on index.
+	•	On selection:
+	•	Animate node to center
+	•	Re-calculate orbit layout
+	•	Recalculate SuggestedNext based on tag overlap
+
+⸻
+
+✅ Output After This Prompt
+
+You should deliver:
+	•	Fully dynamic OrbitDeck experience
+	•	Working orbit navigation based on external JSON
+	•	Logic-aware suggested next nodes
+	•	Theme styling preserved
+	•	Ready for full upload support in next prompt

@@ -1,23 +1,33 @@
-import { MOCK_CONTENT } from "@/lib/constants";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Crosshair, FileText, Search, Route, Eye } from "lucide-react";
+import { Crosshair, FileText, Search, Route, Eye, Target } from "lucide-react";
 import { motion } from "framer-motion";
+import { useDeckLoader } from "@/hooks/use-deck-loader";
+import { ContentItem } from "@/lib/types";
 
-const iconMap = {
-  "Mission Brief": FileText,
-  "Intel Report": Search,
-  "Extraction Plan": Route
+// Dynamic icon mapping based on content tags and titles
+const getIconForContent = (content: ContentItem) => {
+  const title = content.title.toLowerCase();
+  const tags = content.tags.join(' ').toLowerCase();
+  
+  if (title.includes('brief') || tags.includes('briefing') || tags.includes('intro')) return FileText;
+  if (title.includes('intel') || tags.includes('surveillance') || tags.includes('data')) return Search;
+  if (title.includes('extraction') || title.includes('plan') || tags.includes('strategy')) return Route;
+  if (title.includes('equipment') || tags.includes('gear') || tags.includes('tactical')) return Target;
+  
+  return Target; // Default icon
 };
 
 export default function OrbitPreview() {
+  const { content, loading, error } = useDeckLoader();
+
   return (
     <section className="tactical-border rounded-xl p-6 bg-nextm-gray/50">
       <div className="flex items-center justify-between mb-6">
         <h3 className="text-lg font-bold military-stencil text-military-amber">Orbit Preview</h3>
         <div className="flex items-center space-x-4">
-          <span className="text-sm font-mono text-gray-400">3 Content Nodes</span>
+          <span className="text-sm font-mono text-gray-400">{content.length} Content Nodes</span>
           <Button 
             className="px-4 py-2 bg-military-gradient text-nextm-dark font-bold text-sm hover:scale-105 transition-transform"
             onClick={() => window.location.href = '/orbit'}
@@ -49,12 +59,15 @@ export default function OrbitPreview() {
         </motion.div>
         
         {/* Content Orbit Nodes */}
-        {MOCK_CONTENT.map((item, index) => {
-          const IconComponent = iconMap[item.title as keyof typeof iconMap];
+        {content.slice(0, 6).map((item, index) => {
+          const IconComponent = getIconForContent(item);
           const positions = [
-            { top: '25%', left: '70%' }, // Mission Brief
-            { top: '75%', left: '30%' }, // Intel Report  
-            { top: '20%', left: '25%' }  // Extraction Plan
+            { top: '25%', left: '70%' },
+            { top: '75%', left: '30%' },
+            { top: '20%', left: '25%' },
+            { top: '60%', left: '75%' },
+            { top: '80%', left: '60%' },
+            { top: '15%', left: '45%' }
           ];
           const position = positions[index];
           
@@ -89,8 +102,8 @@ export default function OrbitPreview() {
       
       {/* Content Details Panel */}
       <div className="mt-4 grid grid-cols-1 md:grid-cols-3 gap-4">
-        {MOCK_CONTENT.map((item, index) => {
-          const IconComponent = iconMap[item.title as keyof typeof iconMap];
+        {content.slice(0, 3).map((item, index) => {
+          const IconComponent = getIconForContent(item);
           
           return (
             <Card key={index} className="bg-military-dark border-military-tactical p-4">

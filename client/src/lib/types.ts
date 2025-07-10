@@ -2,6 +2,7 @@ export interface ContentItem {
   title: string;
   content: string;
   tags: string[];
+  media?: string;
 }
 
 export interface Template {

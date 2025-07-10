@@ -1,12 +1,22 @@
 import Sidebar from "@/components/layout/sidebar";
-import FileUploader from "@/components/upload/file-uploader";
+import DeckLoader from "@/components/deck/deck-loader";
 import TemplateSelector from "@/components/templates/template-selector";
 import ThemeSelector from "@/components/themes/theme-selector";
 import OrbitPreview from "@/components/orbit/orbit-preview";
 import LaunchPanel from "@/components/launch/launch-panel";
+import { useDeckLoader } from "@/hooks/use-deck-loader";
 import { Satellite, Settings } from "lucide-react";
 
 export default function Home() {
+  const { content, loading, error, loadFromJSON, loadFromFile } = useDeckLoader();
+
+  const handleContentLoad = (newContent: any) => {
+    if (Array.isArray(newContent)) {
+      // Content loaded successfully - could update a global state here
+      console.log('Content loaded:', newContent.length, 'items');
+    }
+  };
+
   return (
     <div className="min-h-screen bg-nextm-gradient">
       {/* Cinematic Overlay */}
@@ -37,7 +47,12 @@ export default function Home() {
         
         {/* Content Area */}
         <div className="p-6 space-y-8">
-          <FileUploader />
+          <DeckLoader 
+            onLoad={handleContentLoad}
+            loading={loading}
+            error={error}
+            currentCount={content.length}
+          />
           <TemplateSelector />
           <ThemeSelector />
           <OrbitPreview />
