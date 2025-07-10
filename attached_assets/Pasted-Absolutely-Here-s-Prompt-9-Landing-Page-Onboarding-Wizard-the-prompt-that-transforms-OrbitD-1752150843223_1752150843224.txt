@@ -1,0 +1,101 @@
+Absolutely. Here’s 🔧 Prompt 9: Landing Page + Onboarding Wizard — the prompt that transforms OrbitDeck from an internal tool into a polished, public-facing SaaS product with real user onboarding.
+
+⸻
+
+🟣 Prompt 9: Landing Page + Onboarding Wizard
+
+This prompt builds the front door of OrbitDeck — including a marketing home page, demo preview, signup CTA, and a multi-step onboarding flow that takes new users from upload to published experience.
+
+⸻
+
+🧠 Prompt Start:
+
+You are now building the Landing Page and Onboarding Flow for OrbitDeck — a cinematic web app that transforms static presentations into interactive, logic-aware storytelling experiences.
+
+⸻
+
+🎯 Objective
+
+Deliver:
+	1.	A fully responsive landing page (OrbitDeck.com)
+	2.	A demo preview showcasing the Orbit template
+	3.	Clear calls to action to start building
+	4.	A multi-step onboarding wizard:
+	•	Upload content
+	•	Choose template
+	•	Choose theme
+	•	Run Claude Classifier
+	•	Preview + publish
+
+⸻
+
+🧱 Component Structure
+
+✅ LandingPage.tsx
+	•	Hero section with headline:
+“Transform Static Slides into Smart, Cinematic Stories.”
+	•	1-liner subtext:
+OrbitDeck makes your pitch unforgettable with interactive web experiences powered by AI and design logic.
+	•	CTA: Get Started → scrolls to onboarding
+	•	Live demo embed of Orbit template
+	•	Feature grid:
+	•	✨ Drag & Drop Upload
+	•	🧠 Claude-Powered Logic
+	•	🎨 3 Premium Themes
+	•	🚀 Ready to Share in Minutes
+	•	Pricing callout (Free → Starter → Pro)
+
+⸻
+
+✅ OnboardingWizard.tsx
+
+Use stepper-style flow with visual progress.
+
+Steps:
+	1.	Upload Your Deck
+	•	Accept .pptx, .zip, or manual entry
+	2.	Choose Your Template
+	•	Orbit (default), SlideStory, ImmersionDeck
+	•	Show small animated previews
+	3.	Choose Your Theme
+	•	Military, Ultra-Modern, Technology
+	•	Apply live preview on selection
+	4.	Add Intelligence
+	•	Run Claude Classifier (automatically enrich slides)
+	•	Display tags + gravity preview
+	5.	Preview & Publish
+	•	Show working OrbitDeck preview
+	•	CTA: Share link or Upgrade for white-label/export
+
+⸻
+
+🧩 UX Expectations
+	•	Use Tailwind + Framer Motion for smooth step transitions
+	•	Persist deck and theme selection in context (useOnboarding())
+	•	Allow back/next navigation
+	•	Animate in progress bar at top or left
+	•	Show watermark if on Free tier
+
+⸻
+
+📦 Supporting Components
+	•	<StepCard /> – consistent card format for each step
+	•	<LivePreviewPanel /> – responsive frame showing live Orbit template
+	•	<ClaudeStatus /> – shows “Running Analysis…” → tags/related found
+	•	<CTAButton /> – high-contrast action button
+	•	<PricingBanner /> – remind user to upgrade at publish step
+
+⸻
+
+✅ Output After This Prompt
+	•	Responsive landing page
+	•	Working onboarding wizard with all 5 steps
+	•	Preview-ready OrbitDeck experience at end of flow
+	•	CTA to share, embed, or upgrade
+	•	The system now feels cohesive, elegant, and SaaS-ready
+
+⸻
+
+Let me know when you’re ready for Prompt 10: GitHub → Render CI/CD Pipeline, the final deploy-and-scale step.
+
+Say Next when you’re ready to ship.
