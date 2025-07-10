@@ -11,6 +11,8 @@ OrbitDeck is a React-based web application that transforms static content (prese
 ✓ **Security Compliance**: Proper client-server separation maintained with robust security practices
 ✓ **Gravity Engine**: Claude-powered story intelligence with dynamic orbit reordering and contextual suggestions
 ✓ **Enhanced Navigation**: Gravity-based content relationships with visual indicators and proximity-based positioning
+✓ **Claude Slide Classifier**: Intelligent content processing with automatic title, tag, and gravity relationship generation
+✓ **Smart Upload Flow**: Raw slide parsing with Claude-enhanced classification and manual prompt generation
 
 ✓ **Orbit Template Complete**: Full interactive Orbit experience with radial node layout
 ✓ **Military Theme Applied**: Tactical animations, color scheme, and stencil fonts implemented  

@@ -1,4 +1,6 @@
 import { useState, useRef } from "react";
+import { RawSlide } from "@/lib/claude-classifier";
+import ClaudeClassifierPanel from "./claude-classifier-panel";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
@@ -14,10 +16,11 @@ interface ContentUploaderProps {
 
 interface UploadState {
   file: File | null;
-  status: 'idle' | 'uploading' | 'parsing' | 'success' | 'error';
+  status: 'idle' | 'uploading' | 'parsing' | 'classifying' | 'success' | 'error';
   progress: number;
   error?: string;
   parsedContent?: ContentItem[];
+  rawSlides?: RawSlide[];
 }
 
 export default function ContentUploader({ onContentParsed, onError }: ContentUploaderProps) {
@@ -53,23 +56,22 @@ export default function ContentUploader({ onContentParsed, onError }: ContentUpl
     try {
       await new Promise(resolve => setTimeout(resolve, 1500)); // Simulate parsing time
 
-      let parsedContent: ContentItem[] = [];
+      let rawSlides: RawSlide[] = [];
 
       if (file.name.endsWith('.pptx')) {
-        parsedContent = await parsePowerPoint(file);
+        rawSlides = await parsePowerPointToRaw(file);
       } else if (file.name.endsWith('.zip')) {
-        parsedContent = await parseZipFolder(file);
+        rawSlides = await parseZipFolderToRaw(file);
       } else {
         throw new Error('Unsupported file format. Please upload .pptx or .zip files.');
       }
 
       setUploadState(prev => ({
         ...prev,
-        status: 'success',
-        parsedContent
+        status: 'classifying',
+        rawSlides
       }));
 
-      onContentParsed(parsedContent);
     } catch (error) {
       const errorMessage = error instanceof Error ? error.message : 'Failed to parse file';
       setUploadState(prev => ({
@@ -81,64 +83,48 @@ export default function ContentUploader({ onContentParsed, onError }: ContentUpl
     }
   };
 
-  const parsePowerPoint = async (file: File): Promise<ContentItem[]> => {
+  const parsePowerPointToRaw = async (file: File): Promise<RawSlide[]> => {
     // Simulated PowerPoint parsing - in production would use pptx parser
-    const simulatedSlides: ContentItem[] = [
+    const simulatedSlides: RawSlide[] = [
       {
-        title: "Mission Overview",
-        content: "Strategic objectives and operational parameters for the deployment phase. This briefing covers essential tactical considerations and resource allocation.",
-        tags: ["briefing", "strategy", "overview"],
-        media: undefined
+        slideTitle: "Mission Overview",
+        slideText: "Strategic objectives and operational parameters for the deployment phase. This briefing covers essential tactical considerations and resource allocation."
       },
       {
-        title: "Intelligence Assessment", 
-        content: "Current threat analysis and situational awareness data. Includes enemy positions, terrain analysis, and communication protocols.",
-        tags: ["intel", "surveillance", "threat-analysis"],
-        media: undefined
+        slideTitle: "Intelligence Assessment", 
+        slideText: "Current threat analysis and situational awareness data. Includes enemy positions, terrain analysis, and communication protocols."
       },
       {
-        title: "Equipment Manifest",
-        content: "Required gear and tactical equipment for mission success. Standard loadout includes communications, navigation, and defensive systems.",
-        tags: ["equipment", "gear", "tactical"],
-        media: undefined
+        slideTitle: "Equipment Manifest",
+        slideText: "Required gear and tactical equipment for mission success. Standard loadout includes communications, navigation, and defensive systems."
       },
       {
-        title: "Extraction Protocol",
-        content: "Emergency procedures and fallback positions. Multiple extraction points identified with contingency routes for mission completion.",
-        tags: ["extraction", "emergency", "protocol"],
-        media: undefined
+        slideTitle: "Extraction Protocol",
+        slideText: "Emergency procedures and fallback positions. Multiple extraction points identified with contingency routes for mission completion."
       },
       {
-        title: "Communications Plan",
-        content: "Radio frequencies, call signs, and secure communication procedures. Includes backup channels and emergency signals.",
-        tags: ["comms", "radio", "security"],
-        media: undefined
+        slideTitle: "Communications Plan",
+        slideText: "Radio frequencies, call signs, and secure communication procedures. Includes backup channels and emergency signals."
       }
     ];
 
     return simulatedSlides;
   };
 
-  const parseZipFolder = async (file: File): Promise<ContentItem[]> => {
+  const parseZipFolderToRaw = async (file: File): Promise<RawSlide[]> => {
     // Simulated ZIP parsing - in production would extract and parse contents
-    const simulatedContent: ContentItem[] = [
+    const simulatedContent: RawSlide[] = [
       {
-        title: "Project Alpha Documentation",
-        content: "Comprehensive project documentation extracted from markdown files. Includes technical specifications and implementation details.",
-        tags: ["documentation", "technical", "alpha"],
-        media: "/assets/project-diagram.jpg"
+        slideTitle: "Project Alpha Documentation",
+        slideText: "Comprehensive project documentation extracted from markdown files. Includes technical specifications and implementation details."
       },
       {
-        title: "System Architecture",
-        content: "Detailed system architecture overview with component relationships and data flow patterns.",
-        tags: ["architecture", "system", "technical"],
-        media: "/assets/architecture-diagram.png"
+        slideTitle: "System Architecture",
+        slideText: "Detailed system architecture overview with component relationships and data flow patterns."
       },
       {
-        title: "User Interface Mockups",
-        content: "UI/UX design mockups and wireframes showing the proposed user experience flow.",
-        tags: ["ui", "design", "mockups"],
-        media: "/assets/ui-mockup.jpg"
+        slideTitle: "User Interface Mockups",
+        slideText: "UI/UX design mockups and wireframes showing the proposed user experience flow."
       }
     ];
 
@@ -183,6 +169,55 @@ export default function ContentUploader({ onContentParsed, onError }: ContentUpl
     if (filename.endsWith('.zip')) return Image;
     return FileText;
   };
+
+  const handleClassificationComplete = (classifiedContent: ContentItem[]) => {
+    setUploadState(prev => ({
+      ...prev,
+      status: 'success',
+      parsedContent: classifiedContent
+    }));
+    onContentParsed(classifiedContent);
+  };
+
+  const handleClassificationError = (error: string) => {
+    setUploadState(prev => ({
+      ...prev,
+      status: 'error',
+      error
+    }));
+    onError?.(error);
+  };
+
+  // Show classifier panel if we have raw slides
+  if (uploadState.status === 'classifying' && uploadState.rawSlides) {
+    return (
+      <div className="space-y-6">
+        <Card className="bg-military-dark border-military-tactical p-4">
+          <div className="flex items-center justify-between">
+            <h3 className="font-bold military-stencil text-military-amber">File Parsed Successfully</h3>
+            <Button
+              variant="outline" 
+              size="sm"
+              onClick={resetUpload}
+              className="border-military-tactical text-military-khaki hover:bg-military-tactical"
+            >
+              <X className="h-4 w-4 mr-1" />
+              Start Over
+            </Button>
+          </div>
+          <p className="text-sm text-gray-400 mt-2">
+            Ready for intelligent classification with Claude
+          </p>
+        </Card>
+        
+        <ClaudeClassifierPanel
+          rawSlides={uploadState.rawSlides}
+          onClassified={handleClassificationComplete}
+          onError={handleClassificationError}
+        />
+      </div>
+    );
+  }
 
   return (
     <Card className="bg-military-dark border-military-tactical p-6">

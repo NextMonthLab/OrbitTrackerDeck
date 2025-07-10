@@ -1,0 +1,107 @@
+Let’s go. Here’s 🔧 Prompt 8: Claude Slide Classifier — the logic layer that automates tagging, titling, and gravity map generation from raw slide content using Claude.
+
+⸻
+
+🟣 Prompt 8: Claude Slide Classifier
+
+This prompt builds the “intelligence loader” for OrbitDeck. It lets Claude scan a deck (from .pptx, .md, or raw text), and return properly formatted JSON with all necessary metadata: titles, tags, and gravity links.
+
+⸻
+
+🧠 Prompt Start:
+
+You are now building the Claude-Powered Slide Classifier for OrbitDeck.
+
+⸻
+
+🎯 Purpose
+
+Turn raw slide content (title + body text) into OrbitDeck-ready JSON objects enriched with:
+	•	Clean, user-friendly title
+	•	Accurate tags
+	•	Smart gravity.related nodes (non-linear navigation logic)
+
+⸻
+
+🧩 Input Format (Raw Deck)
+
+[
+  {
+    "slideTitle": "Slide 1",
+    "slideText": "Welcome to our product demo. Here's what we’ll cover..."
+  },
+  {
+    "slideTitle": "Slide 2",
+    "slideText": "Our pricing is based on three tiers: Starter, Pro, and Enterprise..."
+  },
+  ...
+]
+
+
+⸻
+
+🧠 Claude’s Task
+
+For each slide:
+	1.	Clean/improve the title if needed
+	2.	Generate 2–5 relevant tags
+	3.	Suggest 3 gravity.related titles (other slides likely to follow this one)
+
+⸻
+
+🧩 Expected Output Format
+
+[
+  {
+    "title": "Introduction",
+    "content": "Welcome to our product demo...",
+    "tags": ["overview", "introduction", "product"],
+    "gravity": {
+      "related": ["Pricing", "Demo Highlights", "Contact"]
+    }
+  },
+  ...
+]
+
+
+⸻
+
+⚙️ Implementation
+
+✅ classifySlidesWithClaude(slides: RawSlide[]) => Slide[]
+	•	Takes raw deck input (from Upload Parser)
+	•	Sends to Claude with a clear prompt:
+
+“For each slide, return an object with: title, content, tags (max 5), and gravity.related (3 recommended follow-ups by title).”
+
+✅ Claude API Integration
+	•	Use Claude Console for now (manual or auto-paste)
+	•	Result is saved as deck.json and passed to the Orbit UI
+
+⸻
+
+🧪 Bonus Enhancements (Optional)
+	•	Add a “Run Intelligence” button in the upload UI
+	•	Display tags + gravity results in a preview modal
+	•	Allow user to manually edit before finalizing
+
+⸻
+
+✅ Output After This Prompt
+	•	Claude-classified deck.json enriched with:
+	•	Titles
+	•	Tags
+	•	Gravity maps
+	•	Data structure fully compatible with Orbit + Gravity Engine
+	•	Claude prompt documented and ready for reuse
+
+⸻
+
+Once this is live, users can drop in any unstructured content — and Claude will structure it perfectly for OrbitDeck with zero friction.
+
+Next up:
+
+Prompt 9: Landing Page + Onboarding Wizard
+This will wrap OrbitDeck in a public SaaS shell with demos, CTAs, and first-use onboarding.
+
+Say Next when you’re ready.
