@@ -1,0 +1,122 @@
+Understood, Rob — you’ve cloned the OrbitDeck project into a new Replit account and need me to “brief” this fresh instance properly before issuing Prompt 7.
+
+Let’s reset context and bring it up to speed. Below is the Replit reinitialization prompt — fully bulletproof, designed to inject all prior progress, structure, and expectations.
+
+⸻
+
+🟣 Prompt 0 (Recovery & Context Injection)
+
+Paste this as your very first prompt inside the new Replit instance. This tells Claude exactly what it’s working on, what’s been built so far, and prepares it to accept Prompt 7.
+
+⸻
+
+🧠 Prompt Start:
+
+You are continuing development of a premium SaaS product called OrbitDeck.
+
+⸻
+
+🎯 OrbitDeck’s Purpose
+
+OrbitDeck transforms static slide decks (Google Slides, PowerPoint, or folder uploads) into immersive, non-linear interactive web experiences — rendered with cinematic templates and guided by smart, logic-aware storytelling.
+
+Users upload content → choose a Template → choose a Theme → publish a shareable, conversion-optimized experience.
+
+⸻
+
+✅ Core System Components (Built So Far)
+
+1. Orbit Template (Template 1 of 3)
+	•	Radial layout UI where content nodes “orbit” a central node
+	•	Users can click any node to re-center and update orbit
+	•	Built with React + TailwindCSS + Framer Motion
+	•	Responsive and mobile-ready
+
+2. Content Injection Engine
+	•	Accepts content from local deck.json or uploaded .pptx/.zip
+	•	Each slide block includes:
+
+{
+  "title": "Intel Report",
+  "content": "Summary...",
+  "tags": ["data", "strategy"]
+}
+
+
+	•	Injects nodes into the orbit layout dynamically
+	•	Updates the central display and suggestions on click
+
+3. Upload & Parser (MVP)
+	•	Accepts .pptx or .zip uploads (simulated parsing)
+	•	Converts content into OrbitDeck format
+	•	Plans for Claude-powered metadata extraction
+
+4. Theme Engine
+	•	Three prebuilt visual themes:
+	•	Military, Ultra-Modern, Technology
+	•	Each theme defines colors, fonts, UI textures
+	•	Theme is applied dynamically via context/theme provider
+	•	Default theme = Military
+
+5. SaaS Layer (Simulated or In-Progress)
+	•	Free tier: 1 experience, watermark, locked to Military theme
+	•	Starter tier: 3 experiences, unlock themes
+	•	Pro: Unlimited, export, white-label
+	•	LemonSqueezy integration planned or stubbed
+	•	Mock plan enforcement logic scaffolded
+
+⸻
+
+📁 Current File Structure (Expected)
+
+src/
+  components/
+    OrbitNode.tsx
+    CentralDisplay.tsx
+    SuggestedNext.tsx
+    ThemeSelector.tsx
+    UploadPanel.tsx
+  data/
+    deck.json
+  themes/
+    themes.ts
+  hooks/
+    useTheme.ts
+    useDeck.ts
+public/
+  assets/
+    themes/
+      military/
+      tech/
+      ultraModern/
+
+
+⸻
+
+🎯 Claude’s Next Task: Prompt 7 — Gravity Logic Engine
+
+You will now build a Gravity Engine that:
+	•	Reads the selected node’s tags
+	•	Finds the 3 most related nodes (by tag or Claude-suggested gravity)
+	•	Reorders the orbit visually
+	•	Displays suggestions in the <SuggestedNext /> panel
+
+You may use Claude to:
+	•	Auto-generate missing tags or gravity.related values
+	•	Propose storyline paths
+
+The app must feel cinematic, intelligent, and emotionally directed — not static or linear.
+
+⸻
+
+🧭 Output Expectation
+
+After this context prompt, you are ready to immediately run Prompt 7: Claude-Powered Gravity Engine.
+
+Please wait for that next before proceeding.
+
+⸻
+
+Let me know when you’ve confirmed this context has been pasted successfully.
+
+Then I’ll reissue Prompt 7 cleanly, ready to continue.
