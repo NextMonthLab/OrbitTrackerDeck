@@ -18,7 +18,10 @@ export default function OrbitPreview() {
         <h3 className="text-lg font-bold military-stencil text-military-amber">Orbit Preview</h3>
         <div className="flex items-center space-x-4">
           <span className="text-sm font-mono text-gray-400">3 Content Nodes</span>
-          <Button className="px-4 py-2 bg-military-gradient text-nextm-dark font-bold text-sm hover:scale-105 transition-transform">
+          <Button 
+            className="px-4 py-2 bg-military-gradient text-nextm-dark font-bold text-sm hover:scale-105 transition-transform"
+            onClick={() => window.location.href = '/orbit'}
+          >
             <Eye className="h-4 w-4 mr-2" />
             Launch Preview
           </Button>

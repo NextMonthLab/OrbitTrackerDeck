@@ -42,7 +42,10 @@ export default function LaunchPanel() {
         </div>
         
         <div className="space-y-4">
-          <Button className="w-full p-4 bg-military-gradient text-nextm-dark font-bold military-stencil text-lg hover:scale-105 transition-transform neon-glow">
+          <Button 
+            className="w-full p-4 bg-military-gradient text-nextm-dark font-bold military-stencil text-lg hover:scale-105 transition-transform neon-glow"
+            onClick={() => window.location.href = '/orbit'}
+          >
             <Rocket className="h-5 w-5 mr-2" />
             Begin Experience
           </Button>

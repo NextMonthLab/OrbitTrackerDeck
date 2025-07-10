@@ -1,0 +1,109 @@
+🟣 Prompt 2: Orbit Template Scaffold
+
+Use this right after Prompt 1. This generates the core user interface for the Orbit layout, including the radial node logic, click-to-focus behavior, and military-themed styling.
+
+⸻
+
+🧠 Prompt Start:
+
+You are now building the Orbit Template for OrbitDeck — a dynamic, radial storytelling layout.
+
+⸻
+
+🎯 Purpose
+
+This layout is the first of three experience templates. It must:
+	•	Render a central “starting point” node
+	•	Display content “orbits” (interactive nodes) in a circular pattern
+	•	Allow users to click a node, center it, and reorder the orbit
+	•	Show node content dynamically in the center or right panel
+	•	Style the entire experience using the Military theme
+
+⸻
+
+📐 Layout Specification
+
+Layout Zones:
+	•	Left Sidebar: OrbitDeck logo, theme toggle (future), content loader
+	•	Center View:
+	•	Large central content card
+	•	Orbiting node buttons (8 max visible)
+	•	Nodes reposition based on gravity tags
+	•	Right Panel:
+	•	Full content display (title, text, optional media)
+	•	Suggested next topics (3 gravity-related)
+
+Interaction Flow:
+	1.	Load JSON content (mock for now)
+	2.	Display the first node as “center”
+	3.	Arrange remaining nodes radially
+	4.	When user clicks a node:
+	•	That node moves to center
+	•	Others orbit outward
+	•	Related suggestions are updated based on tags
+
+⸻
+
+🎨 Theme: Military
+
+Apply a consistent Military design aesthetic:
+	•	Colors:
+	•	Background: #1C1C1C
+	•	Primary: #556B2F (Dark Olive)
+	•	Accent: #C0C0C0 (Metallic Silver)
+	•	Fonts:
+	•	Headings: Stardos Stencil, fallback: sans-serif
+	•	Body: Inter
+	•	Assets:
+	•	Optional background grid (e.g. /assets/bg-grid.svg)
+	•	Click sounds (e.g. /assets/click.wav) if time permits
+	•	UI Styling:
+	•	Rounded hexagonal or rectangular node buttons
+	•	Slight bevel or grain texture overlay for realism
+	•	Motion: tactical, snappy (not fluid)
+
+⸻
+
+🧩 Data Format Example (Hardcoded for now)
+
+[
+  {
+    "title": "Mission Brief",
+    "content": "Overview of the operation and goals.",
+    "tags": ["intro", "objectives"]
+  },
+  {
+    "title": "Intel Report",
+    "content": "Enemy locations and battlefield info.",
+    "tags": ["threats", "context"]
+  },
+  {
+    "title": "Extraction Plan",
+    "content": "Timeline and exit strategy.",
+    "tags": ["strategy", "timing"]
+  }
+]
+
+
+⸻
+
+🧱 Build Requirements
+	•	Use React with TailwindCSS and Framer Motion or GSAP for animations.
+	•	Create reusable components:
+	•	<OrbitNode />
+	•	<CentralDisplay />
+	•	<SuggestedNext />
+	•	Orbit nodes must animate around a circular path
+	•	Add data-theme="military" attribute to enable global theming later
+
+⸻
+
+✅ Output
+
+After this prompt, you should deliver:
+	•	OrbitPage.tsx or OrbitView.tsx
+	•	A working orbit layout with interactive radial nodes
+	•	Centered content display
+	•	Theme applied (Military, static)
+	•	All assets local
+	•	Fully responsive

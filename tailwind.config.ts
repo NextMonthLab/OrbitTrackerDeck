@@ -111,13 +111,33 @@ export default {
         "orbit-rotate": {
           from: { transform: "rotate(0deg)" },
           to: { transform: "rotate(360deg)" }
+        },
+        "orbit-pulse": {
+          "0%": { boxShadow: "0 0 0 0 hsla(var(--military-amber), 0.7)" },
+          "70%": { boxShadow: "0 0 0 10px hsla(var(--military-amber), 0)" },
+          "100%": { boxShadow: "0 0 0 0 hsla(var(--military-amber), 0)" }
+        },
+        "tactical-scan": {
+          "0%": { 
+            backgroundPosition: "0% 50%",
+            opacity: "0.3"
+          },
+          "50%": {
+            opacity: "0.7"
+          },
+          "100%": { 
+            backgroundPosition: "100% 50%",
+            opacity: "0.3"
+          }
         }
       },
       animation: {
         "accordion-down": "accordion-down 0.2s ease-out",
         "accordion-up": "accordion-up 0.2s ease-out",
         "tactical-blink": "tactical-blink 2s ease-in-out infinite alternate",
-        "orbit-rotate": "orbit-rotate 20s linear infinite"
+        "orbit-rotate": "orbit-rotate 20s linear infinite",
+        "orbit-pulse": "orbit-pulse 2s infinite",
+        "tactical-scan": "tactical-scan 3s ease-in-out infinite"
       },
     },
   },

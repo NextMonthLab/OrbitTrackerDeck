@@ -114,10 +114,40 @@
   to { transform: rotate(360deg); }
 }
 
+@keyframes orbit-pulse {
+  0% { box-shadow: 0 0 0 0 hsla(var(--military-amber), 0.7); }
+  70% { box-shadow: 0 0 0 10px hsla(var(--military-amber), 0); }
+  100% { box-shadow: 0 0 0 0 hsla(var(--military-amber), 0); }
+}
+
+@keyframes tactical-scan {
+  0% { 
+    background-position: 0% 50%;
+    opacity: 0.3;
+  }
+  50% {
+    opacity: 0.7;
+  }
+  100% { 
+    background-position: 100% 50%;
+    opacity: 0.3;
+  }
+}
+
 .animate-tactical-blink {
   animation: tactical-blink 2s ease-in-out infinite alternate;
 }
 
 .animate-orbit-rotate {
   animation: orbit-rotate 20s linear infinite;
+}
+
+.animate-orbit-pulse {
+  animation: orbit-pulse 2s infinite;
+}
+
+.animate-tactical-scan {
+  animation: tactical-scan 3s ease-in-out infinite;
+  background: linear-gradient(90deg, transparent, hsla(var(--military-amber), 0.2), transparent);
+  background-size: 200% 100%;
 }

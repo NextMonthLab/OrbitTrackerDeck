@@ -63,7 +63,10 @@ export default function Sidebar() {
         
         {/* Quick Actions */}
         <div className="mt-6 space-y-2">
-          <Button className="w-full p-3 bg-military-gradient text-nextm-dark font-bold military-stencil hover:scale-105 transition-transform">
+          <Button 
+            className="w-full p-3 bg-military-gradient text-nextm-dark font-bold military-stencil hover:scale-105 transition-transform"
+            onClick={() => window.location.href = '/orbit'}
+          >
             Begin Experience
           </Button>
           <Button variant="outline" className="w-full p-3 border-military-tactical text-military-khaki hover:bg-military-dark">
