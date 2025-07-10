@@ -1,0 +1,123 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --background: hsl(0, 0%, 100%);
+  --foreground: hsl(20, 14.3%, 4.1%);
+  --muted: hsl(60, 4.8%, 95.9%);
+  --muted-foreground: hsl(25, 5.3%, 44.7%);
+  --popover: hsl(0, 0%, 100%);
+  --popover-foreground: hsl(20, 14.3%, 4.1%);
+  --card: hsl(0, 0%, 100%);
+  --card-foreground: hsl(20, 14.3%, 4.1%);
+  --border: hsl(20, 5.9%, 90%);
+  --input: hsl(20, 5.9%, 90%);
+  --primary: hsl(207, 90%, 54%);
+  --primary-foreground: hsl(211, 100%, 99%);
+  --secondary: hsl(60, 4.8%, 95.9%);
+  --secondary-foreground: hsl(24, 9.8%, 10%);
+  --accent: hsl(60, 4.8%, 95.9%);
+  --accent-foreground: hsl(24, 9.8%, 10%);
+  --destructive: hsl(0, 84.2%, 60.2%);
+  --destructive-foreground: hsl(60, 9.1%, 97.8%);
+  --ring: hsl(20, 14.3%, 4.1%);
+  --radius: 0.5rem;
+
+  /* NextMonth OS Dark Base */
+  --nextm-dark: hsl(210, 40%, 8%);
+  --nextm-darker: hsl(210, 50%, 5%);
+  --nextm-gray: hsl(0, 0%, 10%);
+  --nextm-light: hsl(0, 0%, 16%);
+
+  /* Military Theme */
+  --military-olive: hsl(82, 39%, 30%);
+  --military-khaki: hsl(54, 77%, 75%);
+  --military-tactical: hsl(82, 43%, 22%);
+  --military-dark: hsl(82, 30%, 15%);
+  --military-amber: hsl(43, 100%, 50%);
+
+  /* Neon Accents */
+  --neon-cyan: hsl(185, 100%, 50%);
+  --neon-blue: hsl(207, 100%, 50%);
+  --neon-green: hsl(120, 100%, 55%);
+}
+
+.dark {
+  --background: hsl(210, 40%, 8%);
+  --foreground: hsl(0, 0%, 98%);
+  --muted: hsl(210, 40%, 15%);
+  --muted-foreground: hsl(215, 13%, 65%);
+  --popover: hsl(210, 40%, 8%);
+  --popover-foreground: hsl(0, 0%, 98%);
+  --card: hsl(210, 40%, 8%);
+  --card-foreground: hsl(0, 0%, 98%);
+  --border: hsl(210, 40%, 15%);
+  --input: hsl(210, 40%, 15%);
+  --primary: hsl(207, 90%, 54%);
+  --primary-foreground: hsl(211, 100%, 99%);
+  --secondary: hsl(210, 40%, 15%);
+  --secondary-foreground: hsl(0, 0%, 98%);
+  --accent: hsl(210, 40%, 15%);
+  --accent-foreground: hsl(0, 0%, 98%);
+  --destructive: hsl(0, 62.8%, 30.6%);
+  --destructive-foreground: hsl(0, 0%, 98%);
+  --ring: hsl(212.7, 26.8%, 83.9%);
+  --radius: 0.5rem;
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply font-sans antialiased bg-background text-foreground;
+    font-family: 'Inter', sans-serif;
+  }
+}
+
+@layer utilities {
+  .military-stencil {
+    font-family: 'Impact', 'Arial Black', sans-serif;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    font-weight: 700;
+  }
+
+  .tactical-border {
+    border: 2px solid hsl(var(--military-tactical));
+    border-left: 4px solid hsl(var(--military-amber));
+    box-shadow: inset 0 0 10px hsla(var(--military-olive), 0.2);
+  }
+
+  .orbit-center {
+    transform: translate(-50%, -50%);
+  }
+
+  .neon-glow {
+    box-shadow: 0 0 5px currentColor, 0 0 10px currentColor, 0 0 20px currentColor;
+  }
+
+  .cinematic-overlay {
+    background: radial-gradient(ellipse at center, hsla(var(--neon-cyan), 0.1) 0%, hsla(var(--neon-blue), 0.05) 50%, transparent 100%);
+  }
+}
+
+@keyframes tactical-blink {
+  0%, 50% { opacity: 1; }
+  51%, 100% { opacity: 0.3; }
+}
+
+@keyframes orbit-rotate {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+.animate-tactical-blink {
+  animation: tactical-blink 2s ease-in-out infinite alternate;
+}
+
+.animate-orbit-rotate {
+  animation: orbit-rotate 20s linear infinite;
+}
