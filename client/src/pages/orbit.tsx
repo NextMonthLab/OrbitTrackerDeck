@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { ContentItem } from "@/lib/types";
 import { useDeckLoader } from "@/hooks/use-deck-loader";
-import { GravityEngine } from "@/components/orbit/gravity-engine";
+import { useGravityEngine, GravitySlide } from "@/hooks/use-gravity-engine";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -40,10 +40,15 @@ interface OrbitNodeProps {
   isActive: boolean;
   onClick: () => void;
   index: number;
+  gravityRank?: number;
 }
 
-function OrbitNode({ content, position, isActive, onClick, index }: OrbitNodeProps) {
+function OrbitNode({ content, position, isActive, onClick, index, gravityRank = 0 }: OrbitNodeProps) {
   const IconComponent = getIconForContent(content);
+  
+  // High gravity items get enhanced styling
+  const isHighGravity = gravityRank >= 8;
+  const isMediumGravity = gravityRank >= 4 && gravityRank < 8;
   
   return (
     <motion.div
@@ -55,7 +60,7 @@ function OrbitNode({ content, position, isActive, onClick, index }: OrbitNodePro
       }}
       initial={{ scale: 0, opacity: 0 }}
       animate={{ 
-        scale: isActive ? 1.2 : 1, 
+        scale: isActive ? 1.2 : (isHighGravity ? 1.1 : 1), 
         opacity: 1,
         rotate: isActive ? 0 : index * 45
       }}
@@ -72,9 +77,17 @@ function OrbitNode({ content, position, isActive, onClick, index }: OrbitNodePro
         w-16 h-16 rounded-lg border-2 flex flex-col items-center justify-center p-2 transition-all duration-300
         ${isActive 
           ? 'bg-military-gradient border-military-amber shadow-lg neon-glow animate-orbit-pulse' 
+          : isHighGravity
+          ? 'bg-military-dark border-military-amber hover:border-military-khaki hover:animate-orbit-pulse shadow-md'
+          : isMediumGravity
+          ? 'bg-military-dark border-military-khaki hover:border-military-amber hover:animate-orbit-pulse'
           : 'bg-military-dark border-military-tactical hover:border-military-khaki hover:animate-orbit-pulse'
         }
       `}>
+        {/* Gravity indicator */}
+        {isHighGravity && (
+          <div className="absolute -top-1 -right-1 w-3 h-3 bg-military-amber rounded-full animate-pulse"></div>
+        )}
         <IconComponent className={`h-4 w-4 mb-1 ${
           isActive ? 'text-nextm-dark' : 'text-military-khaki'
         }`} />
@@ -143,15 +156,8 @@ interface SuggestedNextProps {
 }
 
 function SuggestedNext({ currentContent, allContent, onSelect }: SuggestedNextProps) {
-  // Use Gravity Engine for intelligent suggestions
-  const suggested = GravityEngine.getSuggestedNext(currentContent, allContent);
+  const { suggestedNext } = useGravityEngine(currentContent, allContent);
   
-  if (suggested.length === 0) {
-    // If no related content, show other items
-    const others = allContent.filter(item => item.title !== currentContent.title).slice(0, 3);
-    suggested.push(...others);
-  }
-
   // Check if suggestions are gravity-based or tag-based
   const hasGravityData = currentContent.gravity?.related && currentContent.gravity.related.length > 0;
   
@@ -171,7 +177,7 @@ function SuggestedNext({ currentContent, allContent, onSelect }: SuggestedNextPr
           Powered by story intelligence
         </div>
       )}
-      {suggested.map((item, index) => {
+      {suggestedNext.map((item, index) => {
         const IconComponent = getIconForContent(item);
         
         return (
@@ -209,6 +215,7 @@ export default function OrbitPage() {
   const { content, loading: deckLoading, error } = useDeckLoader();
   const [activeContent, setActiveContent] = useState<ContentItem | null>(null);
   const [isLoading, setIsLoading] = useState(false);
+  const { reorderedSlides } = useGravityEngine(activeContent, content);
 
   // Set initial active content when deck loads
   useEffect(() => {
@@ -218,33 +225,29 @@ export default function OrbitPage() {
   }, [content, activeContent]);
 
   // Calculate orbital positions for nodes with gravity-based ordering
-  const getOrbitPositions = (count: number, excludeActive: boolean = true) => {
+  const getOrbitPositions = (slides: GravitySlide[]) => {
     const positions = [];
     const centerX = 50;
     const centerY = 50;
     
-    let availableContent = excludeActive && activeContent
-      ? content.filter(item => item.title !== activeContent.title)
-      : content;
-    
-    // Use gravity engine to reorder content if we have an active content
-    if (activeContent && excludeActive) {
-      const reordered = GravityEngine.reorderByGravity(activeContent, content);
-      availableContent = reordered.filter(item => item.title !== activeContent.title);
-    }
-    
-    for (let i = 0; i < availableContent.length; i++) {
-      const angle = (i / availableContent.length) * 2 * Math.PI;
-      // Vary radius based on gravity relationship - closer for related content
-      const isGravityRelated = activeContent?.gravity?.related?.includes(availableContent[i].title);
-      const radius = isGravityRelated ? 30 : 40; // Closer orbit for related content
+    for (let i = 0; i < slides.length; i++) {
+      const angle = (i / slides.length) * 2 * Math.PI;
+      const slide = slides[i];
+      
+      // Vary radius based on gravity rank - closer for high gravity content
+      let radius = 40; // Default radius
+      if (slide.gravityRank >= 8) {
+        radius = 28; // Very close for high gravity
+      } else if (slide.gravityRank >= 4) {
+        radius = 34; // Medium distance for medium gravity
+      }
       
       const x = centerX + radius * Math.cos(angle);
       const y = centerY + radius * Math.sin(angle);
       positions.push({ x, y });
     }
     
-    return { positions, orderedContent: availableContent };
+    return positions;
   };
 
   const handleNodeClick = async (newContent: ContentItem) => {
@@ -293,7 +296,8 @@ export default function OrbitPage() {
     );
   }
 
-  const { positions: orbitPositions, orderedContent: orbitContent } = getOrbitPositions(content.length - 1);
+  const orbitPositions = getOrbitPositions(reorderedSlides);
+  const orbitContent = reorderedSlides;
 
   return (
     <div className="min-h-screen bg-nextm-gradient" data-theme="military">
@@ -381,14 +385,15 @@ export default function OrbitPage() {
           <CentralDisplay content={activeContent} />
           
           {/* Orbit Nodes */}
-          {orbitContent.map((content, index) => (
+          {orbitContent.map((slide, index) => (
             <OrbitNode
-              key={content.title}
-              content={content}
+              key={slide.title}
+              content={slide}
               position={orbitPositions[index]}
               isActive={false}
-              onClick={() => handleNodeClick(content)}
+              onClick={() => handleNodeClick(slide)}
               index={index}
+              gravityRank={slide.gravityRank}
             />
           ))}
           

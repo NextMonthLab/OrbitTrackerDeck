@@ -1,0 +1,120 @@
+🟣 Prompt 7: Claude-Powered Gravity Engine
+
+Paste this directly after the reinitialization prompt. It builds the logic layer that makes OrbitDeck feel intelligent and adaptive — using tags and Claude-suggested relationships to drive navigation and suggested content.
+
+⸻
+
+🧠 Prompt Start:
+
+You are now building the Gravity Logic Engine for OrbitDeck.
+
+⸻
+
+🎯 Goal
+
+Enable OrbitDeck to intelligently suggest what content a user should view next — based on what they’ve clicked, what tags exist, and what Claude infers from content relationships.
+
+This system powers:
+	•	SuggestedNext panel
+	•	Orbit reordering logic
+	•	Content relevance mapping
+
+⸻
+
+🧩 Content Structure (Required)
+
+Each slide/node uses this format:
+
+type Slide = {
+  title: string
+  content: string
+  tags: string[]
+  media?: string
+  gravity?: {
+    related?: string[]    // Titles of related nodes
+    intensity?: number    // Optional influence score
+  }
+}
+
+If gravity.related exists, use it.
+If not, fallback to tag-matching to determine next nodes.
+
+⸻
+
+🔄 Gravity Logic Flow
+
+When a user clicks on a node:
+	1.	That node becomes the focused center
+	2.	The tags of that node are evaluated
+	3.	All other nodes are scored based on:
+	•	Shared tags (simple count)
+	•	Optional Claude-inferred gravity.related
+	4.	The 3 best matches are:
+	•	Moved closer in the orbit (optional animation)
+	•	Shown in the <SuggestedNext /> panel
+
+⸻
+
+⚙️ Core Function
+
+Build a function like:
+
+function getSuggestedNext(current: Slide, all: Slide[]): Slide[] {
+  if (current.gravity?.related?.length) {
+    return all.filter(slide =>
+      current.gravity.related?.includes(slide.title)
+    ).slice(0, 3)
+  }
+
+  return all
+    .filter(slide => slide.title !== current.title)
+    .map(slide => ({
+      ...slide,
+      relevance: slide.tags.filter(tag =>
+        current.tags.includes(tag)
+      ).length
+    }))
+    .sort((a, b) => b.relevance - a.relevance)
+    .slice(0, 3)
+}
+
+
+⸻
+
+📦 Component Integration
+
+Update these components:
+
+✅ <SuggestedNext />
+	•	Accepts the currentSlide and deck
+	•	Renders the top 3 related nodes
+	•	Clicking one jumps to that node
+
+✅ <OrbitNode />
+	•	Accept a gravityRank prop (optional)
+	•	Use this to animate orbit distance or priority color
+
+✅ useGravityEngine.ts
+	•	Encapsulate logic for calculating suggestions
+
+⸻
+
+🧠 Optional: Claude-Assisted Gravity Mapping
+
+You may create a Claude utility prompt:
+
+“Given this deck, return an array of objects with tags and 3 related titles that should follow each slide based on logical interest or narrative flow.”
+
+Inject the result into each slide’s gravity.related.
+
+⸻
+
+✅ Output After This Prompt
+	•	Intelligent gravity suggestion logic
+	•	Working <SuggestedNext /> panel
+	•	Orbit reordering or styling to reflect relatedness
+	•	Claude-compatible data model for future enrichment
+
+⸻
+
+Once this is live, the experience will feel alive — it adapts to the user’s curiosity, tells stories non-linearly, and sets OrbitDeck apart from any static deck.
