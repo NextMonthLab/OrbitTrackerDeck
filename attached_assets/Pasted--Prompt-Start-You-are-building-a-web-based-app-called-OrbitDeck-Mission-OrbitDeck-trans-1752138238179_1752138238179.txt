@@ -1,0 +1,102 @@
+🧠 Prompt Start:
+
+You are building a web-based app called OrbitDeck.
+
+⸻
+
+🎯 Mission
+
+OrbitDeck transforms static content (presentations, folders, or slide decks) into interactive, cinematic storytelling experiences. Users upload assets, choose a template and a visual theme, and OrbitDeck generates a responsive, logic-aware microsite.
+
+⸻
+
+🧱 Core Structure
+
+Users must be able to:
+	1.	Upload or connect their existing content:
+	•	Google Slides URL (via API)
+	•	PowerPoint file (.pptx)
+	•	Structured folder (.md, .jpg, .mp4, etc.)
+	2.	Choose a Presentation Template (layout/logic structure):
+	•	Orbit: Radial UI with branching interactions
+	•	SlideStory: Non-linear cinematic slides
+	•	ImmersionDeck: Scroll-based journey with contextual triggers
+	3.	Choose a Visual Theme (aesthetic package):
+	•	Military: Khaki, olive, stencil fonts, schematics, hard edges
+	•	Ultra-Modern: Black/white/silver, minimal UI, glow motion
+	•	Technology: Neon blues, matrix overlays, code-style fonts
+	4.	Preview + Launch an experience with:
+	•	URL sharing
+	•	Optional embed mode
+	•	Watermark and branding depending on SaaS tier
+
+⸻
+
+💻 Platform Constraints
+	•	Built in React (Next.js or Vite)
+	•	Use TailwindCSS for styling, with theme config overrides
+	•	Animations via Framer Motion or GSAP
+	•	Component architecture must support plug-and-play themes and templates
+	•	Frontend-only MVP is acceptable — backend routes to be mocked
+
+⸻
+
+🖌️ Visual Style
+
+Use the NextMonth OS design system, as shown in reference screenshots:
+	•	Dark theme, cinematic gradients, soft neon accents
+	•	Clean vertical sidebar
+	•	Button-led interaction (e.g., “Begin App Build”)
+	•	Components feel premium, polished, and purposeful
+	•	Fonts: Inter, JetBrains Mono, or template-specific styles
+
+⸻
+
+🧩 Component Modules Required
+
+Create modular components for:
+	•	File uploader (Google Slides, .pptx, drag/drop folder)
+	•	Template selector (with animated previews)
+	•	Theme selector (with thumbnails and style tokens)
+	•	Orbit layout renderer
+	•	SlideStory renderer
+	•	ImmersionDeck scroll logic
+	•	Content gravity engine (optional v2)
+	•	Live preview + share panel
+
+⸻
+
+🧪 Initial Build Target
+
+Build the Orbit template first, styled using the Military theme.
+Use hardcoded JSON to simulate imported content:
+
+[
+  { "title": "Mission Brief", "content": "Overview of the operation", "tags": ["intro", "context"] },
+  { "title": "Intel Report", "content": "Enemy movements and terrain", "tags": ["data", "threats"] },
+  { "title": "Extraction Plan", "content": "Steps for success", "tags": ["strategy", "action"] }
+]
+
+
+⸻
+
+🧠 Claude’s Role (if applicable)
+
+Claude should:
+	•	Auto-tag slide content for logic reordering
+	•	Suggest likely follow-ups (e.g., after “Pricing”, show “Testimonials”)
+	•	Help populate theme assets (fonts, colors, overlays)
+
+⸻
+
+✅ Deliverables from this prompt:
+	•	React frontend scaffold with:
+	•	Orbit template structure
+	•	Military theme applied
+	•	Placeholder UI for:
+	•	Theme switcher
+	•	Template chooser
+	•	Content loader
+	•	Tailwind config with 3 themes prepared
+	•	Static content rendered from JSON
+	•	Preview and “Begin Experience” button
