@@ -1,0 +1,87 @@
+🟣 Prompt 4: Upload & Slide Parser
+
+This prompt introduces user-uploaded content, parses it into OrbitDeck’s required JSON format, and connects it directly into the content injection engine from Prompt 3.
+
+⸻
+
+🧠 Prompt Start:
+
+You are now building the Upload & Slide Parser system for OrbitDeck.
+
+⸻
+
+🎯 Objective
+
+Allow users to:
+	1.	Upload a .pptx (PowerPoint) file or ZIP folder of markdown/images
+	2.	(Optional future: Connect Google Slides)
+	3.	Parse that content into OrbitDeck’s standard format
+	4.	Inject it into the Orbit layout dynamically
+
+⸻
+
+🧩 OrbitDeck Format Target (Again)
+
+All uploaded content must be transformed into this JSON structure:
+
+[
+  {
+    "title": "Slide Title",
+    "content": "Main slide text or narration",
+    "tags": ["theme", "intent", "topic"],
+    "media": "/assets/image1.jpg" // optional
+  }
+]
+
+
+⸻
+
+📂 Upload Flow Requirements
+
+1. Create a <ContentUploader /> component
+	•	Accept .pptx or .zip files (ZIP contains .md, .jpg, etc.)
+	•	Display uploaded filename
+	•	Show success or error state
+
+2. Parse .pptx Files (Client-side or via Cloud API)
+	•	For MVP: Simulate .pptx parsing with hardcoded output
+	•	Use PptxGenJS or python-pptx in future
+	•	Extract:
+	•	Title (from first text box or heading)
+	•	Body content (main notes or paragraphs)
+	•	Images (optional)
+
+3. Parse .zip Content
+	•	Assume ZIP contains structured:
+	•	slide1.md, slide2.md
+	•	img1.jpg, video1.mp4
+	•	Match each .md to corresponding media
+	•	Convert Markdown to plain text or HTML
+
+⸻
+
+📦 Output Integration
+	•	After parsing, inject resulting JSON into the Orbit state
+	•	Replace the placeholder deck.json
+	•	Allow “Re-upload” to overwrite existing session
+	•	Store state in memory (no backend yet)
+
+⸻
+
+🔁 Suggested Component Updates
+	•	Add upload panel to left sidebar (<Sidebar />)
+	•	Hook parsed output into useDeck() hook or central state manager
+	•	Add button: “Preview Orbit” → launches the current injected experience
+
+⸻
+
+✅ What Claude/Replit Should Deliver
+	•	Working <ContentUploader /> with file drop
+	•	.pptx simulated parsing logic → returns mock JSON
+	•	.zip simulated parsing logic → match .md + media
+	•	State injection into the Orbit system
+	•	Frontend-only for now (no server dependencies)
+
+⸻
+
+Once this is working, you’ll be ready to let real users build experiences in minutes — no manual content formatting required.

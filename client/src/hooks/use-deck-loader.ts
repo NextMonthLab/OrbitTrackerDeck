@@ -89,6 +89,18 @@ export function useDeckLoader() {
     loadDeck();
   }, []);
 
+  const loadFromParsedContent = (parsedContent: ContentItem[]) => {
+    try {
+      setLoading(true);
+      setContent(parsedContent);
+      setError(null);
+    } catch (err) {
+      setError('Failed to load parsed content');
+    } finally {
+      setLoading(false);
+    }
+  };
+
   return {
     content,
     loading,
@@ -96,6 +108,7 @@ export function useDeckLoader() {
     loadDeck,
     loadFromJSON,
     loadFromFile,
+    loadFromParsedContent,
     reload: () => loadDeck()
   };
 }
