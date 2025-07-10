@@ -4,9 +4,10 @@ import { QueryClientProvider } from "@tanstack/react-query";
 import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { ThemeProvider } from "@/hooks/use-theme";
+import { ErrorBoundary } from "@/components/error-boundary";
 import Home from "@/pages/home";
 import LandingPage from "@/pages/landing";
-import OrbitPage from "@/pages/orbit";
+import OrbitPage from "@/pages/orbit-production";
 import NotFound from "@/pages/not-found";
 
 function Router() {
@@ -22,16 +23,18 @@ function Router() {
 
 function App() {
   return (
-    <QueryClientProvider client={queryClient}>
-      <ThemeProvider>
-        <TooltipProvider>
-          <div className="dark">
-            <Toaster />
-            <Router />
-          </div>
-        </TooltipProvider>
-      </ThemeProvider>
-    </QueryClientProvider>
+    <ErrorBoundary>
+      <QueryClientProvider client={queryClient}>
+        <ThemeProvider>
+          <TooltipProvider>
+            <div className="dark">
+              <Toaster />
+              <Router />
+            </div>
+          </TooltipProvider>
+        </ThemeProvider>
+      </QueryClientProvider>
+    </ErrorBoundary>
   );
 }
 

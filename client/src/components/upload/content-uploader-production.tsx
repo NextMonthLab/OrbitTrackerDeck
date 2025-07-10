@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
 import { Badge } from "@/components/ui/badge";
-import { Upload, FileText, Image, Video, CheckCircle, AlertCircle, X } from "lucide-react";
+import { Upload, FileText, Image, Video, CheckCircle, AlertCircle, X, Loader2 } from "lucide-react";
 import { ContentItem } from "@/lib/types";
 import { motion, AnimatePresence } from "framer-motion";
 
@@ -32,6 +32,32 @@ export default function ContentUploader({ onContentParsed, onError }: ContentUpl
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const handleFileSelect = (file: File) => {
+    if (!file) return;
+    
+    // Validate file type
+    const allowedTypes = ['.pptx', '.zip'];
+    const fileExtension = '.' + file.name.split('.').pop()?.toLowerCase();
+    
+    if (!allowedTypes.includes(fileExtension)) {
+      setUploadState(prev => ({
+        ...prev,
+        status: 'error',
+        error: 'Please upload .pptx or .zip files only'
+      }));
+      return;
+    }
+
+    // Validate file size (50MB limit)
+    const maxSize = 50 * 1024 * 1024; // 50MB
+    if (file.size > maxSize) {
+      setUploadState(prev => ({
+        ...prev,
+        status: 'error',
+        error: 'File size must be less than 50MB'
+      }));
+      return;
+    }
+
     setUploadState({
       file,
       status: 'uploading',
@@ -41,7 +67,7 @@ export default function ContentUploader({ onContentParsed, onError }: ContentUpl
     // Simulate upload progress
     const uploadProgress = setInterval(() => {
       setUploadState(prev => {
-        const newProgress = prev.progress + 10;
+        const newProgress = Math.min(prev.progress + 15, 100);
         if (newProgress >= 100) {
           clearInterval(uploadProgress);
           parseFile(file);
@@ -49,12 +75,12 @@ export default function ContentUploader({ onContentParsed, onError }: ContentUpl
         }
         return { ...prev, progress: newProgress };
       });
-    }, 100);
+    }, 150);
   };
 
   const parseFile = async (file: File) => {
     try {
-      await new Promise(resolve => setTimeout(resolve, 1500)); // Simulate parsing time
+      await new Promise(resolve => setTimeout(resolve, 2000)); // Simulate parsing time
 
       let rawSlides: RawSlide[] = [];
 
@@ -63,7 +89,11 @@ export default function ContentUploader({ onContentParsed, onError }: ContentUpl
       } else if (file.name.endsWith('.zip')) {
         rawSlides = await parseZipFolderToRaw(file);
       } else {
-        throw new Error('Unsupported file format. Please upload .pptx or .zip files.');
+        throw new Error('Unsupported file format');
+      }
+
+      if (rawSlides.length === 0) {
+        throw new Error('No content found in the uploaded file');
       }
 
       setUploadState(prev => ({
@@ -85,7 +115,7 @@ export default function ContentUploader({ onContentParsed, onError }: ContentUpl
 
   const parsePowerPointToRaw = async (file: File): Promise<RawSlide[]> => {
     // Simulated PowerPoint parsing - in production would use pptx parser
-    const simulatedSlides: RawSlide[] = [
+    return [
       {
         slideTitle: "Mission Overview",
         slideText: "Strategic objectives and operational parameters for the deployment phase. This briefing covers essential tactical considerations and resource allocation."
@@ -107,13 +137,11 @@ export default function ContentUploader({ onContentParsed, onError }: ContentUpl
         slideText: "Radio frequencies, call signs, and secure communication procedures. Includes backup channels and emergency signals."
       }
     ];
-
-    return simulatedSlides;
   };
 
   const parseZipFolderToRaw = async (file: File): Promise<RawSlide[]> => {
     // Simulated ZIP parsing - in production would extract and parse contents
-    const simulatedContent: RawSlide[] = [
+    return [
       {
         slideTitle: "Project Alpha Documentation",
         slideText: "Comprehensive project documentation extracted from markdown files. Includes technical specifications and implementation details."
@@ -127,8 +155,6 @@ export default function ContentUploader({ onContentParsed, onError }: ContentUpl
         slideText: "UI/UX design mockups and wireframes showing the proposed user experience flow."
       }
     ];
-
-    return simulatedContent;
   };
 
   const handleDrop = (e: React.DragEvent) => {
@@ -194,7 +220,12 @@ export default function ContentUploader({ onContentParsed, onError }: ContentUpl
       <div className="space-y-6">
         <Card className="bg-gray-900/50 border-gray-700 p-4">
           <div className="flex items-center justify-between">
-            <h3 className="font-bold text-white">File Parsed Successfully</h3>
+            <div>
+              <h3 className="font-bold text-white">File Parsed Successfully</h3>
+              <p className="text-sm text-gray-400 mt-1">
+                Ready for intelligent classification with Claude
+              </p>
+            </div>
             <Button
               variant="outline" 
               size="sm"
@@ -205,9 +236,6 @@ export default function ContentUploader({ onContentParsed, onError }: ContentUpl
               Start Over
             </Button>
           </div>
-          <p className="text-sm text-gray-400 mt-2">
-            Ready for intelligent classification with Claude
-          </p>
         </Card>
         
         <ClaudeClassifierPanel
@@ -229,7 +257,7 @@ export default function ContentUploader({ onContentParsed, onError }: ContentUpl
               variant="outline" 
               size="sm"
               onClick={resetUpload}
-              className="border-military-tactical text-military-khaki hover:bg-military-tactical"
+              className="border-gray-600 text-gray-300 hover:bg-gray-700"
             >
               <X className="h-4 w-4 mr-1" />
               Reset
@@ -243,17 +271,17 @@ export default function ContentUploader({ onContentParsed, onError }: ContentUpl
               initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -10 }}
-              className="border-2 border-dashed border-military-tactical rounded-lg p-8 text-center hover:border-military-khaki transition-colors cursor-pointer"
+              className="border-2 border-dashed border-gray-600 rounded-lg p-8 text-center hover:border-gray-500 transition-colors cursor-pointer"
               onDrop={handleDrop}
               onDragOver={handleDragOver}
               onClick={() => fileInputRef.current?.click()}
             >
-              <Upload className="h-12 w-12 text-military-olive mx-auto mb-4" />
-              <p className="text-military-khaki font-mono text-sm mb-2">
+              <Upload className="h-12 w-12 text-gray-400 mx-auto mb-4" />
+              <p className="text-gray-300 text-sm mb-2">
                 Drop files here or click to browse
               </p>
               <p className="text-gray-400 text-xs">
-                Supports .pptx (PowerPoint) and .zip (Markdown + Media)
+                Supports .pptx (PowerPoint) and .zip (Markdown + Media) • Max 50MB
               </p>
               <input
                 ref={fileInputRef}
@@ -280,10 +308,13 @@ export default function ContentUploader({ onContentParsed, onError }: ContentUpl
                   <>
                     {(() => {
                       const IconComponent = getFileIcon(uploadState.file.name);
-                      return <IconComponent className="h-5 w-5 text-military-khaki" />;
+                      return <IconComponent className="h-5 w-5 text-gray-300" />;
                     })()}
-                    <span className="font-mono text-sm text-military-khaki">
+                    <span className="text-sm text-gray-300">
                       {uploadState.file.name}
+                    </span>
+                    <span className="text-xs text-gray-500">
+                      ({(uploadState.file.size / 1024 / 1024).toFixed(1)} MB)
                     </span>
                   </>
                 )}
@@ -291,16 +322,17 @@ export default function ContentUploader({ onContentParsed, onError }: ContentUpl
               
               <div className="space-y-2">
                 <div className="flex justify-between items-center">
-                  <span className="text-xs font-mono text-gray-400">
+                  <span className="text-xs text-gray-400 flex items-center">
+                    <Loader2 className="h-3 w-3 mr-1 animate-spin" />
                     {uploadState.status === 'uploading' ? 'Uploading...' : 'Parsing content...'}
                   </span>
-                  <span className="text-xs font-mono text-military-khaki">
+                  <span className="text-xs text-gray-300">
                     {uploadState.progress}%
                   </span>
                 </div>
                 <Progress 
                   value={uploadState.progress} 
-                  className="bg-military-tactical"
+                  className="h-2"
                 />
               </div>
             </motion.div>
@@ -315,29 +347,36 @@ export default function ContentUploader({ onContentParsed, onError }: ContentUpl
             >
               <div className="flex items-center space-x-2 text-green-400">
                 <CheckCircle className="h-5 w-5" />
-                <span className="font-mono text-sm">Parsing complete!</span>
+                <span className="text-sm">Upload and classification complete!</span>
               </div>
 
               <div className="bg-gray-800 rounded-lg p-4 space-y-3">
                 <div className="flex items-center justify-between">
-                  <span className="text-xs font-mono text-gray-400">Extracted Content</span>
+                  <span className="text-xs text-gray-400">Processed Content</span>
                   <Badge className="bg-green-500/20 text-green-400">
-                    {uploadState.parsedContent.length} items
+                    {uploadState.parsedContent.length} slides
                   </Badge>
                 </div>
                 
                 <div className="space-y-2 max-h-32 overflow-y-auto">
                   {uploadState.parsedContent.slice(0, 3).map((item, index) => (
                     <div key={index} className="flex items-center space-x-2 text-xs">
-                      <div className="w-2 h-2 bg-green-400 rounded-full"></div>
-                      <span className="text-gray-300 font-mono truncate">
+                      <div className="w-2 h-2 bg-green-400 rounded-full flex-shrink-0"></div>
+                      <span className="text-gray-300 truncate">
                         {item.title}
                       </span>
+                      <div className="flex gap-1">
+                        {item.tags.slice(0, 2).map(tag => (
+                          <Badge key={tag} variant="secondary" className="text-[10px] px-1 py-0">
+                            {tag}
+                          </Badge>
+                        ))}
+                      </div>
                     </div>
                   ))}
                   {uploadState.parsedContent.length > 3 && (
-                    <div className="text-xs text-gray-400 font-mono">
-                      +{uploadState.parsedContent.length - 3} more items...
+                    <div className="text-xs text-gray-400">
+                      +{uploadState.parsedContent.length - 3} more slides...
                     </div>
                   )}
                 </div>
@@ -350,25 +389,24 @@ export default function ContentUploader({ onContentParsed, onError }: ContentUpl
               initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -10 }}
-              className="space-y-3"
+              className="space-y-4"
             >
               <div className="flex items-center space-x-2 text-red-400">
                 <AlertCircle className="h-5 w-5" />
-                <span className="font-mono text-sm">Upload failed</span>
+                <span className="text-sm">Upload failed</span>
               </div>
               
-              <p className="text-xs text-gray-400 bg-red-950/20 rounded p-2 border border-red-900/30">
-                {uploadState.error}
-              </p>
-
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={resetUpload}
-                className="w-full border-military-tactical text-military-khaki hover:bg-military-tactical"
-              >
-                Try Again
-              </Button>
+              <div className="bg-red-500/10 border border-red-500/20 rounded-lg p-4">
+                <p className="text-red-400 text-sm">{uploadState.error}</p>
+                <Button 
+                  variant="outline" 
+                  size="sm" 
+                  onClick={resetUpload}
+                  className="mt-3 border-red-500/30 text-red-400 hover:bg-red-500/10"
+                >
+                  Try Again
+                </Button>
+              </div>
             </motion.div>
           )}
         </AnimatePresence>

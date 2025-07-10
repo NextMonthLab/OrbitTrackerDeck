@@ -5,7 +5,7 @@ import { Card } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
 import { Badge } from "@/components/ui/badge";
 import { ContentItem } from "@/lib/types";
-import ContentUploader from "@/components/upload/content-uploader";
+import ContentUploader from "@/components/upload/content-uploader-production";
 import TemplateSelector from "@/components/templates/template-selector";
 import ThemeSelector from "@/components/themes/theme-selector";
 import BrandCustomizer from "@/components/themes/brand-customizer";
@@ -84,9 +84,24 @@ export default function OnboardingWizard({ onComplete }: OnboardingWizardProps) 
   const progress = ((state.currentStep - 1) / (steps.length - 1)) * 100;
 
   const handleNext = () => {
-    if (state.currentStep < steps.length) {
+    if (state.currentStep < steps.length && canProceed()) {
       setState(prev => ({ ...prev, currentStep: prev.currentStep + 1 }));
+    } else if (state.currentStep === steps.length) {
+      // Complete onboarding
+      handleComplete();
     }
+  };
+
+  const handleComplete = () => {
+    // Save user's setup to localStorage for persistence
+    const setupData = {
+      content: state.content,
+      template: state.selectedTemplate,
+      theme: state.selectedTheme,
+      timestamp: Date.now()
+    };
+    localStorage.setItem('orbitdeck-setup', JSON.stringify(setupData));
+    onComplete();
   };
 
   const handlePrevious = () => {
@@ -198,26 +213,50 @@ export default function OnboardingWizard({ onComplete }: OnboardingWizardProps) 
 
                 {state.currentStep === 2 && (
                   <StepCard title="Select Template">
-                    <TemplateSelector />
-                    <div className="mt-6 grid md:grid-cols-3 gap-4">
-                      {["orbit", "slidestory", "immersiondeck"].map((template) => (
+                    <div className="grid md:grid-cols-3 gap-4">
+                      {[
+                        {
+                          id: "orbit",
+                          name: "Orbit",
+                          description: "Interactive radial layout with gravity-based navigation",
+                          icon: Layout,
+                          recommended: true
+                        },
+                        {
+                          id: "slidestory",
+                          name: "SlideStory",
+                          description: "Cinematic progression with narrative flow",
+                          icon: Video,
+                          recommended: false
+                        },
+                        {
+                          id: "immersiondeck",
+                          name: "ImmersionDeck", 
+                          description: "Scroll-based journey with contextual triggers",
+                          icon: Image,
+                          recommended: false
+                        }
+                      ].map((template) => (
                         <Card 
-                          key={template}
-                          className={`p-4 cursor-pointer transition-colors ${
-                            state.selectedTemplate === template 
-                              ? 'bg-purple-500/20 border-purple-500' 
-                              : 'bg-gray-800/50 border-gray-700 hover:bg-gray-700/50'
+                          key={template.id}
+                          className={`p-4 cursor-pointer transition-all duration-200 ${
+                            state.selectedTemplate === template.id 
+                              ? 'bg-purple-500/20 border-purple-500 ring-1 ring-purple-500/30' 
+                              : 'bg-gray-800/50 border-gray-700 hover:bg-gray-700/50 hover:border-gray-600'
                           }`}
-                          onClick={() => handleTemplateSelected(template)}
+                          onClick={() => handleTemplateSelected(template.id)}
                         >
+                          {template.recommended && (
+                            <Badge className="mb-2 bg-green-500/20 text-green-400 border-green-500/30">
+                              Recommended
+                            </Badge>
+                          )}
                           <div className="aspect-video bg-gray-900 rounded mb-3 flex items-center justify-center">
-                            <Layout className="h-8 w-8 text-gray-500" />
+                            <template.icon className="h-8 w-8 text-gray-500" />
                           </div>
-                          <h3 className="font-medium text-white capitalize">{template}</h3>
-                          <p className="text-sm text-gray-400">
-                            {template === "orbit" ? "Interactive radial layout" :
-                             template === "slidestory" ? "Cinematic progression" :
-                             "Scroll-based journey"}
+                          <h3 className="font-medium text-white mb-1">{template.name}</h3>
+                          <p className="text-sm text-gray-400 leading-relaxed">
+                            {template.description}
                           </p>
                         </Card>
                       ))}
@@ -270,15 +309,36 @@ export default function OnboardingWizard({ onComplete }: OnboardingWizardProps) 
                 )}
 
                 {state.currentStep === 5 && (
-                  <StepCard title="Publish Your Experience">
+                  <StepCard title="Launch Your Experience">
                     <div className="space-y-6">
                       <div className="text-center">
-                        <h3 className="text-lg font-medium text-white mb-2">
+                        <div className="w-16 h-16 bg-gradient-to-br from-purple-500 to-blue-500 rounded-full flex items-center justify-center mx-auto mb-4">
+                          <Rocket className="h-8 w-8 text-white" />
+                        </div>
+                        <h3 className="text-xl font-semibold text-white mb-2">
                           Your OrbitDeck is Ready!
                         </h3>
                         <p className="text-gray-400 mb-6">
                           Share your interactive experience or upgrade for advanced features.
                         </p>
+                      </div>
+
+                      <div className="bg-gray-800/50 rounded-lg p-4 space-y-3">
+                        <h4 className="font-medium text-white">Setup Summary</h4>
+                        <div className="grid grid-cols-3 gap-4 text-center">
+                          <div>
+                            <div className="text-2xl font-bold text-purple-400">{state.content.length}</div>
+                            <div className="text-xs text-gray-400">Slides</div>
+                          </div>
+                          <div>
+                            <div className="text-2xl font-bold text-blue-400 capitalize">{state.selectedTemplate}</div>
+                            <div className="text-xs text-gray-400">Template</div>
+                          </div>
+                          <div>
+                            <div className="text-2xl font-bold text-green-400 capitalize">{state.selectedTheme}</div>
+                            <div className="text-xs text-gray-400">Theme</div>
+                          </div>
+                        </div>
                       </div>
                       
                       <div className="grid md:grid-cols-2 gap-4">
@@ -287,11 +347,15 @@ export default function OnboardingWizard({ onComplete }: OnboardingWizardProps) 
                           onClick={handlePublish}
                         >
                           <Share className="h-4 w-4 mr-2" />
-                          Share Link
+                          {state.isPublished ? "View Experience" : "Publish & Share"}
                         </Button>
-                        <Button variant="outline" className="border-gray-600">
-                          <Download className="h-4 w-4 mr-2" />
-                          Export (Pro)
+                        <Button 
+                          variant="outline" 
+                          className="border-gray-600 text-gray-300 hover:bg-gray-700"
+                          onClick={() => window.open('/orbit', '_blank')}
+                        >
+                          <Rocket className="h-4 w-4 mr-2" />
+                          Preview Experience
                         </Button>
                       </div>
                       
@@ -299,24 +363,37 @@ export default function OnboardingWizard({ onComplete }: OnboardingWizardProps) 
                         <Card className="bg-green-500/10 border-green-500/30 p-4">
                           <div className="flex items-center space-x-3">
                             <CheckCircle className="h-5 w-5 text-green-400" />
-                            <div>
+                            <div className="flex-1">
                               <p className="text-green-400 font-medium">Published Successfully!</p>
-                              <p className="text-sm text-gray-400">
-                                Your OrbitDeck is live at: orbitdeck.app/experience/abc123
+                              <p className="text-sm text-gray-400 mt-1">
+                                Your OrbitDeck is live and ready to share
                               </p>
+                              <div className="flex items-center space-x-2 mt-2">
+                                <code className="text-xs bg-gray-800 px-2 py-1 rounded">
+                                  https://orbitdeck.app/e/{Math.random().toString(36).substring(7)}
+                                </code>
+                                <Button size="sm" variant="outline" className="h-6 px-2 text-xs">
+                                  Copy
+                                </Button>
+                              </div>
                             </div>
                           </div>
                         </Card>
                       )}
                       
-                      <Card className="bg-purple-500/10 border-purple-500/30 p-4">
-                        <h4 className="font-medium text-purple-400 mb-2">Upgrade to Remove Watermark</h4>
-                        <p className="text-sm text-gray-400 mb-3">
-                          Get custom branding, analytics, and white-label export with Starter plan.
-                        </p>
-                        <Button size="sm" className="bg-purple-600 hover:bg-purple-700">
-                          Upgrade Now - $19/month
-                        </Button>
+                      <Card className="bg-gradient-to-r from-purple-500/10 to-blue-500/10 border-purple-500/30 p-4">
+                        <div className="flex items-start space-x-3">
+                          <Sparkles className="h-5 w-5 text-purple-400 mt-0.5" />
+                          <div>
+                            <h4 className="font-medium text-purple-400 mb-1">Upgrade for More Power</h4>
+                            <p className="text-sm text-gray-400 mb-3">
+                              Remove watermarks, get analytics, custom domains, and white-label export.
+                            </p>
+                            <Button size="sm" className="bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700">
+                              Upgrade to Starter - $19/month
+                            </Button>
+                          </div>
+                        </div>
                       </Card>
                     </div>
                   </StepCard>
@@ -338,10 +415,10 @@ export default function OnboardingWizard({ onComplete }: OnboardingWizardProps) 
               
               <Button
                 onClick={handleNext}
-                disabled={!canProceed() || state.currentStep === steps.length}
-                className="bg-purple-600 hover:bg-purple-700"
+                disabled={!canProceed()}
+                className="bg-purple-600 hover:bg-purple-700 disabled:bg-gray-600 disabled:cursor-not-allowed"
               >
-                {state.currentStep === steps.length ? "Complete" : "Next"}
+                {state.currentStep === steps.length ? "Complete Setup" : "Continue"}
                 <ArrowRight className="h-4 w-4 ml-2" />
               </Button>
             </div>
