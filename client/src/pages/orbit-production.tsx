@@ -83,14 +83,14 @@ function OrbitNode({ content, position, isActive, onClick, index, gravityRank = 
       onClick={onClick}
     >
       <div className={`
-        w-16 h-16 rounded-xl border-2 flex flex-col items-center justify-center p-2 transition-all duration-300 backdrop-blur-sm
+        w-16 h-16 rounded-2xl border-2 flex flex-col items-center justify-center p-2 transition-all duration-300 glass-dark will-change-transform
         ${isActive 
-          ? 'bg-purple-500/30 border-purple-400 shadow-lg shadow-purple-500/30 animate-pulse' 
+          ? 'bg-gradient-primary border-purple-400 shadow-glow-purple animate-pulse-glow' 
           : isHighGravity
-          ? 'bg-gray-800/80 border-green-400 hover:border-green-300 hover:shadow-md hover:shadow-green-400/20'
+          ? 'border-green-400 hover:border-green-300 hover:shadow-glow-blue hover-lift'
           : isMediumGravity
-          ? 'bg-gray-800/80 border-blue-400 hover:border-blue-300 hover:shadow-md hover:shadow-blue-400/20'
-          : 'bg-gray-800/80 border-gray-600 hover:border-gray-400 hover:shadow-md'
+          ? 'border-blue-400 hover:border-blue-300 hover:shadow-md hover-lift'
+          : 'border-gray-600 hover:border-gray-400 hover:shadow-elegant hover-lift'
         }
       `}>
         {/* Gravity indicator */}
@@ -134,12 +134,12 @@ function CentralDisplay({ content }: CentralDisplayProps) {
       key={content.title}
       transition={{ type: "spring", stiffness: 300, damping: 25 }}
     >
-      <Card className="w-full h-full bg-gray-900/80 backdrop-blur-sm border-gray-700 p-6 flex flex-col items-center justify-center text-center">
-        <div className="w-16 h-16 bg-gradient-to-br from-purple-500 to-blue-500 rounded-xl flex items-center justify-center mb-4">
-          <IconComponent className="h-8 w-8 text-white" />
+      <Card className="w-full h-full glass-dark border-white/20 p-6 flex flex-col items-center justify-center text-center shadow-floating">
+        <div className="w-20 h-20 bg-gradient-primary rounded-2xl flex items-center justify-center mb-6 shadow-glow-purple animate-pulse-glow">
+          <IconComponent className="h-10 w-10 text-white" />
         </div>
         
-        <h3 className="font-bold text-white text-xl mb-3 leading-tight">
+        <h3 className="font-display text-white text-2xl mb-4 leading-tight text-gradient">
           {content.title}
         </h3>
         
@@ -341,26 +341,43 @@ export default function OrbitPage() {
   const orbitPositions = getOrbitPositions(reorderedSlides);
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-900 via-black to-gray-800 relative overflow-hidden">
-      {/* Header */}
-      <div className="absolute top-0 left-0 right-0 z-40 bg-gray-900/80 backdrop-blur-sm border-b border-gray-700">
-        <div className="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
+    <div className="min-h-screen bg-gradient-cosmic relative overflow-hidden">
+      {/* Ambient lighting effects */}
+      <div className="absolute inset-0 pointer-events-none">
+        <div className="absolute top-1/3 left-1/3 w-96 h-96 bg-purple-500/5 rounded-full blur-3xl animate-float"></div>
+        <div className="absolute bottom-1/3 right-1/3 w-80 h-80 bg-blue-500/5 rounded-full blur-3xl animate-float" style={{animationDelay: '3s'}}></div>
+        <div className="absolute top-2/3 left-2/3 w-64 h-64 bg-cyan-500/3 rounded-full blur-3xl animate-float" style={{animationDelay: '6s'}}></div>
+      </div>
+
+      {/* Enhanced Header */}
+      <div className="absolute top-0 left-0 right-0 z-40 glass-dark border-b border-white/10">
+        <div className="container-responsive py-4 flex items-center justify-between">
           <div className="flex items-center space-x-4">
             <Button
               variant="ghost"
               size="sm"
               onClick={() => window.location.href = '/'}
-              className="text-gray-300 hover:text-white"
+              className="text-gray-300 hover:text-white hover-lift"
             >
               <ArrowLeft className="h-4 w-4 mr-1" />
               Builder
             </Button>
             <div className="h-6 w-px bg-gray-600" />
-            <h1 className="text-xl font-semibold text-white">OrbitDeck Experience</h1>
+            <div>
+              <h1 className="text-xl font-display text-white">OrbitDeck Experience</h1>
+              <div className="text-sm text-gray-400 font-mono">
+                {content.length} slides • Interactive navigation
+              </div>
+            </div>
           </div>
           
-          <div className="text-sm text-gray-400">
-            {content.length} slides • Orbit template
+          <div className="flex items-center space-x-4">
+            <div className="px-3 py-1 bg-gradient-primary rounded-full text-xs font-mono text-white">
+              LIVE
+            </div>
+            <Button size="sm" variant="outline" className="border-gray-600 text-gray-300 hover:bg-gray-700">
+              Share
+            </Button>
           </div>
         </div>
       </div>
@@ -411,8 +428,8 @@ export default function OrbitPage() {
         </div>
       </div>
 
-      {/* Sidebar with Suggestions */}
-      <div className="absolute top-20 right-0 w-80 h-full bg-gray-900/80 backdrop-blur-sm border-l border-gray-700 p-6 overflow-y-auto">
+      {/* Enhanced Sidebar */}
+      <div className="absolute top-20 right-0 w-80 h-full glass-dark border-l border-white/10 p-6 overflow-y-auto">
         <div className="space-y-6">
           <div>
             <h3 className="text-white font-semibold mb-3 flex items-center">
