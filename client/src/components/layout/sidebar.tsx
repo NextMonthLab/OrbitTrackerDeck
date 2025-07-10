@@ -2,6 +2,8 @@ import { Satellite, Upload, Grid3X3, Palette, Eye, Save } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useDeckLoader } from "@/hooks/use-deck-loader";
 import ContentUploader from "@/components/upload/content-uploader";
+import ThemeSelector from "@/components/themes/theme-selector";
+import BrandCustomizer from "@/components/themes/brand-customizer";
 import { useToast } from "@/hooks/use-toast";
 import { useState } from "react";
 
@@ -79,6 +81,12 @@ export default function Sidebar() {
             />
           </div>
         )}
+
+        {/* Theme & Brand Customization */}
+        <div className="mt-8 space-y-6">
+          <ThemeSelector />
+          <BrandCustomizer />
+        </div>
         
         {/* Current Configuration */}
         <div className="mt-8 p-4 tactical-border rounded-lg bg-military-dark/50">

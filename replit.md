@@ -14,6 +14,9 @@ OrbitDeck is a React-based web application that transforms static content (prese
 ✓ **Content Injection Engine**: Dynamic deck loading from JSON, file upload, and URL import
 ✓ **Dynamic Icon Mapping**: Intelligent icon assignment based on content tags and titles
 ✓ **Enhanced Data Flow**: Real-time content updates across all components with loading states
+✓ **Upload & Slide Parser**: Drag-and-drop file upload with PowerPoint and ZIP folder parsing
+✓ **Theme + Brand Customizer**: Three predefined themes with real-time switching and custom color/font options
+✓ **Global Theme System**: CSS variables and ThemeProvider for consistent styling across all components
 
 ## User Preferences
 

@@ -1,7 +1,6 @@
 import Sidebar from "@/components/layout/sidebar";
 import DeckLoader from "@/components/deck/deck-loader";
 import TemplateSelector from "@/components/templates/template-selector";
-import ThemeSelector from "@/components/themes/theme-selector";
 import OrbitPreview from "@/components/orbit/orbit-preview";
 import LaunchPanel from "@/components/launch/launch-panel";
 import { useDeckLoader } from "@/hooks/use-deck-loader";
@@ -54,7 +53,6 @@ export default function Home() {
             currentCount={content.length}
           />
           <TemplateSelector />
-          <ThemeSelector />
           <OrbitPreview />
           <LaunchPanel />
         </div>

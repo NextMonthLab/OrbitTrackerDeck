@@ -1,0 +1,109 @@
+🟣 Prompt 5: Theme + Brand Customizer
+
+This prompt builds a visual theme switcher and global style system that applies user-selected branding (colors, fonts, styling) to any OrbitDeck experience.
+
+⸻
+
+🧠 Prompt Start:
+
+You are now building the Theme + Brand Customizer for OrbitDeck.
+
+⸻
+
+🎯 Objective
+
+Enable users to:
+	1.	Select one of three predefined visual themes:
+	•	Military, Ultra-Modern, Technology
+	2.	See immediate changes applied across:
+	•	Backgrounds
+	•	Fonts
+	•	Accent colors
+	•	Node/card styling
+	3.	Allow optional manual override of:
+	•	Primary color
+	•	Accent color
+	•	Font (from a dropdown)
+	•	Logo (optional)
+
+⸻
+
+🧩 Theme Object Structure
+
+Each theme should be defined in a centralized config (e.g. themes.ts) like:
+
+export const themes = {
+  military: {
+    name: "Military",
+    background: "#1C1C1C",
+    primary: "#556B2F",
+    accent: "#C0C0C0",
+    font: "Stardos Stencil",
+    texture: "/assets/themes/military/grid.svg"
+  },
+  ultraModern: {
+    name: "Ultra-Modern",
+    background: "#0A0A0A",
+    primary: "#FFFFFF",
+    accent: "#00FFFF",
+    font: "Inter",
+    texture: "/assets/themes/modern/noise.png"
+  },
+  technology: {
+    name: "Technology",
+    background: "#000000",
+    primary: "#00FFEF",
+    accent: "#1E90FF",
+    font: "JetBrains Mono",
+    texture: "/assets/themes/tech/grid.svg"
+  }
+}
+
+
+⸻
+
+🧩 Component Requirements
+
+✅ <ThemeSelector />
+	•	Dropdown or card-based UI to preview and pick one of the 3 themes
+	•	Shows thumbnail + name + description
+
+✅ <BrandCustomizer />
+	•	Color picker for primary and accent
+	•	Google Font dropdown (Inter, JetBrains Mono, Stardos Stencil, etc.)
+	•	Optional logo uploader (not wired in MVP)
+	•	“Reset to Default” button
+
+✅ <ThemeProvider />
+	•	Wraps entire app
+	•	Applies selected theme using Tailwind’s className logic OR CSS variables
+	•	Supports dynamic switching without full reload
+
+⸻
+
+⚙️ Integration Logic
+	•	Store selected theme in app state (useTheme())
+	•	Default to military
+	•	Add a data-theme="military" attribute to <body> for targeting
+	•	Animate transitions smoothly (e.g. background fades)
+
+⸻
+
+🎯 Bonus (Optional in MVP)
+	•	Save last-used theme to localStorage
+	•	Add subtle visual flourishes per theme:
+	•	Military: stencil fade-in, radar pulse hover
+	•	Ultra-Modern: glow ring hover, blur transitions
+	•	Technology: matrix flicker, HUD overlays
+
+⸻
+
+✅ Output After This Prompt
+	•	A working <ThemeSelector /> UI
+	•	A global ThemeProvider that modifies layout based on chosen theme
+	•	All 3 theme objects defined and styled
+	•	Orbit template responds in real time
+
+⸻
+
+Once this is in place, every OrbitDeck experience feels tailored, immersive, and brand-aligned — even with zero design experience.
