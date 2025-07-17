@@ -96,7 +96,6 @@ export default function ThemeSelector() {
                   style={{
                     backgroundColor: theme.surface,
                     borderColor: themeId === id ? theme.accent : theme.effects.border,
-                    ringColor: theme.accent,
                     boxShadow: themeId === id ? theme.effects.glow : theme.effects.shadow
                   }}
                   onClick={() => handleThemeSelect(id as ThemeId)}

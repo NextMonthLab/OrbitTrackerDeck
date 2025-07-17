@@ -5,19 +5,26 @@ import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { ThemeProvider } from "@/hooks/use-theme";
 import { ErrorBoundary } from "@/components/error-boundary";
-import Home from "@/pages/home";
-import LandingPage from "@/pages/landing";
-import OrbitPage from "@/pages/orbit-production";
-import NotFound from "@/pages/not-found";
+import { Suspense } from "react";
+import {
+  LazyHome,
+  LazyLanding,
+  LazyOrbitProduction,
+  LazyNotFound,
+} from "@/pages/LazyPages";
 
 function Router() {
   return (
-    <Switch>
-      <Route path="/" component={LandingPage} />
-      <Route path="/builder" component={Home} />
-      <Route path="/orbit" component={OrbitPage} />
-      <Route component={NotFound} />
-    </Switch>
+    <Suspense fallback={<div className="flex items-center justify-center min-h-screen">
+      <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-purple-600"></div>
+    </div>}>
+      <Switch>
+        <Route path="/" component={LazyLanding} />
+        <Route path="/builder" component={LazyHome} />
+        <Route path="/orbit" component={LazyOrbitProduction} />
+        <Route component={LazyNotFound} />
+      </Switch>
+    </Suspense>
   );
 }
 
