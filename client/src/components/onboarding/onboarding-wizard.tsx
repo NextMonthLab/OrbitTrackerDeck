@@ -18,10 +18,13 @@ import {
   Brain, 
   Rocket,
   ArrowLeft,
+  Video,
+  Sparkles,
   ArrowRight,
   CheckCircle,
   Share,
-  Download
+  Download,
+  Image
 } from "lucide-react";
 
 interface OnboardingWizardProps {

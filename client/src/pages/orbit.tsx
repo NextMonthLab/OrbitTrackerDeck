@@ -236,9 +236,9 @@ export default function OrbitPage() {
       
       // Vary radius based on gravity rank - closer for high gravity content
       let radius = 40; // Default radius
-      if (slide.gravityRank >= 8) {
+      if (slide.gravityRank && slide.gravityRank >= 8) {
         radius = 28; // Very close for high gravity
-      } else if (slide.gravityRank >= 4) {
+      } else if (slide.gravityRank && slide.gravityRank >= 4) {
         radius = 34; // Medium distance for medium gravity
       }
       
