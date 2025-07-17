@@ -1,0 +1,15 @@
+{
+    "keep": {
+        "days": true,
+        "amount": 14
+    },
+    "auditLog": "/Users/robhutt/OrbitTrackerDeck/logs/.e20f1b07b2024cdf214ca41530f44bfa3233df42-audit.json",
+    "files": [
+        {
+            "date": 1752771977297,
+            "name": "/Users/robhutt/OrbitTrackerDeck/logs/combined-2025-07-17.log",
+            "hash": "b948f50bd11debaf1e9864c5b7bb2a6b05d77724b60dd29e6b9a575b63a6f10b"
+        }
+    ],
+    "hashType": "sha256"
+}
